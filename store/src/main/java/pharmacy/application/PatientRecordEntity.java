@@ -56,7 +56,9 @@ public class PatientRecordEntity
     }
 
     public Effect<Done> delete() {
-        return effects()
+        return currentState() == null ?
+            effects().error("PatientRecord not found") :
+            effects()
                 .persist(new PatientRecordEvent.PatientRecordDeleted())
                 .deleteEntity()
                 .thenReply(newState -> Done.getInstance());
