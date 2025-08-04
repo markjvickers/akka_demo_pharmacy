@@ -68,6 +68,10 @@ public class PatientRecordEndpoint {
 
     @Delete("/patient/{patientId}")
     public HttpResponse delete(String patientId) {
+        componentClient
+                .forEventSourcedEntity(patientId)
+                .method(PatientRecordEntity::delete)
+                .invoke();
         return HttpResponses.ok();
     }
 
