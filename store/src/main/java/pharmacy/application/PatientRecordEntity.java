@@ -58,11 +58,11 @@ public class PatientRecordEntity
         );
     }
 
-    public ReadOnlyEffect<PatientRecord> getRecord() {
+    public ReadOnlyEffect<Optional<PatientRecord>> getRecord() {
         if (isDeleted()) {
             return effects().error("PatientRecord expunged.");
         }
-        return effects().reply(currentState());
+        return effects().reply(Optional.ofNullable(currentState()));
     }
 
     public Effect<Done> update(PatientRecord patientRecord) {
@@ -94,7 +94,7 @@ public class PatientRecordEntity
 
     public Effect<Done> merge(PatientMergeRequest request) {
         if (isDeleted()) {
-            return effects().error("PatientRecord expunged.");
+            return effects().error("PatientRecord expunged");
         }
         return validate(request.updated)
                 .orElseGet(() -> {

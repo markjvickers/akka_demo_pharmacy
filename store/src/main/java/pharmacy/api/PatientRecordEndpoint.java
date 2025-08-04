@@ -1,7 +1,9 @@
 package pharmacy.api;
 
 
+import akka.http.javadsl.model.StatusCodes;
 import akka.http.javadsl.model.HttpResponse;
+import akka.javasdk.http.HttpException;
 import akka.javasdk.annotations.Acl;
 import akka.javasdk.annotations.http.Delete;
 import akka.javasdk.annotations.http.Get;
@@ -50,10 +52,14 @@ public class PatientRecordEndpoint {
     @Get("/{patientId}")
     public PatientRecord get(String patientId) {
         logger.info("Get patient id={}", patientId);
-        return componentClient
+        var record = componentClient
                 .forEventSourcedEntity(patientId)
                 .method(PatientRecordEntity::getRecord)
                 .invoke();
+        if(record.isPresent())
+            return record.get();
+        else
+            throw HttpException.error(StatusCodes.NOT_FOUND, "Patient not found");
     }
 
     @Put("/patient")
