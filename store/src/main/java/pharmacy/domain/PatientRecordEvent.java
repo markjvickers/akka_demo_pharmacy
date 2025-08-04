@@ -17,6 +17,6 @@ public sealed interface PatientRecordEvent {
     record PatientRecordMerged(PatientRecord updated, String mergedWithPatientId) implements PatientRecordEvent {}
 
     @TypeName("patient-opted-in-for-sms")
-    record PatientOptedInForSms(Boolean smsOptIn) implements PatientRecordEvent {}
+    record PatientOptedInForSms() implements PatientRecordEvent {}
 
 }

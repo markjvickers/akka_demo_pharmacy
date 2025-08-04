@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import pharmacy.domain.PatientRecord;
 import pharmacy.domain.PatientRecordEvent;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 @ComponentId("patient-record")
@@ -41,10 +42,15 @@ public class PatientRecordEntity
             return effects().error("PatientRecord already exists.");
         }
         return validate(patientRecord)
-                .orElseGet(() ->
-                    effects()
-                            .persist(new PatientRecordEvent.PatientRecordCreated(patientRecord))
-                            .thenReply(newState -> Done.getInstance())
+                .orElseGet(() -> {
+                    var events = new ArrayList<PatientRecordEvent>();
+                    events.add(new PatientRecordEvent.PatientRecordCreated(patientRecord));
+                    if (patientRecord.smsOptInPref())
+                        events.add(new PatientRecordEvent.PatientOptedInForSms());
+                    return effects()
+                            .persistAll(events)
+                            .thenReply(newState -> Done.getInstance());
+                }
         );
     }
 
@@ -54,11 +60,15 @@ public class PatientRecordEntity
 
     public Effect<Done> update(PatientRecord patientRecord) {
         return validate(patientRecord)
-                .orElseGet(() ->
-                        effects()
-                                .persist(new PatientRecordEvent.PatientRecordUpdated(patientRecord))
-                                .thenReply(newState -> Done.getInstance())
-                );
+                .orElseGet(() -> {
+                    var events = new ArrayList<PatientRecordEvent>();
+                    events.add(new PatientRecordEvent.PatientRecordUpdated(patientRecord));
+                    if(!currentState().smsOptInPref() && patientRecord.smsOptInPref())
+                        events.add(new PatientRecordEvent.PatientOptedInForSms());
+                    return effects()
+                            .persistAll(events)
+                            .thenReply(newState -> Done.getInstance());
+                });
     }
 
     public Effect<Done> delete() {
@@ -81,19 +91,13 @@ public class PatientRecordEntity
                 });
     }
 
-    public Effect<Done> withSMSOptIn(Boolean smsOptIn) {
-        return effects()
-                .persist(new PatientRecordEvent.PatientOptedInForSms(smsOptIn))
-                .thenReply(newState -> Done.getInstance());
-    }
-
     public PatientRecord applyEvent(PatientRecordEvent event) {
         return switch (event) {
             case PatientRecordEvent.PatientRecordCreated evt -> evt.patientRecord();
             case PatientRecordEvent.PatientRecordUpdated evt -> evt.patientRecord();
             case PatientRecordEvent.PatientRecordDeleted evt -> null;
             case PatientRecordEvent.PatientRecordMerged evt -> evt.updated();
-            case PatientRecordEvent.PatientOptedInForSms evt -> currentState().withSmsOptInPref(evt.smsOptIn());
+            case PatientRecordEvent.PatientOptedInForSms evt -> currentState();
         };
     }
 
