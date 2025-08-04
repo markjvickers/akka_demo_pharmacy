@@ -41,6 +41,10 @@ public class PatientRecordEntity
             logger.info("PatientRecord id={} already exists.", entityId);
             return effects().error("PatientRecord already exists.");
         }
+        if (isDeleted()) {
+            logger.info("PatientRecord has been expunged, id={}", entityId);
+            return effects().error("PatientRecord expunged.");
+        }
         return validate(patientRecord)
                 .orElseGet(() -> {
                     var events = new ArrayList<PatientRecordEvent>();
@@ -55,10 +59,16 @@ public class PatientRecordEntity
     }
 
     public ReadOnlyEffect<PatientRecord> getRecord() {
+        if (isDeleted()) {
+            return effects().error("PatientRecord expunged.");
+        }
         return effects().reply(currentState());
     }
 
     public Effect<Done> update(PatientRecord patientRecord) {
+        if (isDeleted()) {
+            return effects().error("PatientRecord expunged.");
+        }
         return validate(patientRecord)
                 .orElseGet(() -> {
                     var events = new ArrayList<PatientRecordEvent>();
@@ -72,15 +82,20 @@ public class PatientRecordEntity
     }
 
     public Effect<Done> delete() {
-        return currentState() == null ?
-            effects().error("PatientRecord not found") :
-            effects()
+        if(currentState() == null)
+            return effects().error("PatientRecord not found");
+        else if(isDeleted())
+            return effects().error("PatientRecord expunged");
+        else return effects()
                 .persist(new PatientRecordEvent.PatientRecordDeleted())
                 .deleteEntity()
                 .thenReply(newState -> Done.getInstance());
     }
 
     public Effect<Done> merge(PatientMergeRequest request) {
+        if (isDeleted()) {
+            return effects().error("PatientRecord expunged.");
+        }
         return validate(request.updated)
                 .orElseGet(() -> {
                     var merged = new PatientRecordEvent.PatientRecordMerged(request.updated, request.mergedPatientId);
@@ -95,7 +110,7 @@ public class PatientRecordEntity
         return switch (event) {
             case PatientRecordEvent.PatientRecordCreated evt -> evt.patientRecord();
             case PatientRecordEvent.PatientRecordUpdated evt -> evt.patientRecord();
-            case PatientRecordEvent.PatientRecordDeleted evt -> null;
+            case PatientRecordEvent.PatientRecordDeleted evt -> currentState();
             case PatientRecordEvent.PatientRecordMerged evt -> evt.updated();
             case PatientRecordEvent.PatientOptedInForSms evt -> currentState();
         };

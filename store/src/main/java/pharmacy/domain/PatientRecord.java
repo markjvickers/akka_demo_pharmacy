@@ -22,28 +22,4 @@ public record PatientRecord(
         boolean smsOptInPref
 ) {
 
-    // Java, you so tedious
-    public PatientRecord withSmsOptInPref(boolean newPref) {
-        return new PatientRecord(
-                pharmacyId,
-                patientId,
-                firstName,
-                lastName,
-                prefName,
-                dateOfBirth,
-                phoneNumber,
-                provHealthNumber,
-                unitNumber,
-                streetNumber,
-                streetName,
-                city,
-                province,
-                postalCode,
-                country,
-                langPref,
-                newPref
-        );
-    }
-
-
 }

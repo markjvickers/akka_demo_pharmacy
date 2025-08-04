@@ -59,6 +59,7 @@ public class PatientRecordEndpoint {
     @Put("/patient")
     public String create(PatientCreateRequest request) {
         var patientId = java.util.UUID.randomUUID().toString();
+        logger.info("Handling create patient request, id={}", patientId);
         var record = getPatientRecordFromCreateRequest(request, patientId);
         componentClient
                 .forEventSourcedEntity(patientId)
@@ -69,6 +70,7 @@ public class PatientRecordEndpoint {
 
     @Post("/patient/merge")
     public HttpResponse merge(PatientMergeRequest mergeRequest) {
+        logger.info("Request to merge patient id={} with patient {}", mergeRequest.updated().patientId(), mergeRequest.mergedPatientId());
         componentClient
                 .forEventSourcedEntity(mergeRequest.updated().patientId())
                 .method(PatientRecordEntity::merge)
@@ -78,6 +80,7 @@ public class PatientRecordEndpoint {
 
     @Put("/patient/{patientId}")
     public HttpResponse update(String patientId, PatientRecord record) {
+        logger.info("Request to update patient id={}", patientId);
         componentClient
                 .forEventSourcedEntity(patientId)
                 .method(PatientRecordEntity::update)
@@ -88,6 +91,7 @@ public class PatientRecordEndpoint {
 
     @Delete("/patient/{patientId}")
     public HttpResponse delete(String patientId) {
+        logger.info("Request to delete patient id={}", patientId);
         componentClient
                 .forEventSourcedEntity(patientId)
                 .method(PatientRecordEntity::delete)
