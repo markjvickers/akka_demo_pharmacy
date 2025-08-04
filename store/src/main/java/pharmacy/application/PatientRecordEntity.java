@@ -69,6 +69,8 @@ public class PatientRecordEntity
         if (isDeleted()) {
             return effects().error("PatientRecord expunged.");
         }
+        if(currentState() == null)
+            return effects().error("PatientRecord not found.");
         return validate(patientRecord)
                 .orElseGet(() -> {
                     var events = new ArrayList<PatientRecordEvent>();
