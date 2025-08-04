@@ -16,14 +16,6 @@ public class PatientRecordEntity
         extends EventSourcedEntity<PatientRecord, PatientRecordEvent> {
 
 
-    public sealed interface Reply {
-        record OK() implements Reply {
-        }
-
-        record Error(String msg) implements Reply {
-        }
-    }
-
     private final String entityId;
 
     private static final Logger logger = LoggerFactory.getLogger(PatientRecordEntity.class);
