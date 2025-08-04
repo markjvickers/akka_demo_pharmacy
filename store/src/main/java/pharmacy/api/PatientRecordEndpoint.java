@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.Optional;
 import pharmacy.application.PatientRecordEntity;
+import pharmacy.application.PatientRecordEntity.PatientMergeRequest;
 import pharmacy.domain.PatientRecord;
 
 @Acl(allow = @Acl.Matcher(principal = Acl.Principal.INTERNET))
@@ -65,6 +66,25 @@ public class PatientRecordEndpoint {
                 .invoke(record);
         return patientId;
     }
+
+    @Post("/patient/merge")
+    public HttpResponse merge(PatientMergeRequest mergeRequest) {
+        componentClient
+                .forEventSourcedEntity(mergeRequest.updated().patientId())
+                .method(PatientRecordEntity::merge)
+                .invoke(mergeRequest);
+        return HttpResponses.ok();
+    }
+
+    @Put("/patient/{patientId}")
+    public HttpResponse update(String patientId, PatientRecord record) {
+        componentClient
+                .forEventSourcedEntity(patientId)
+                .method(PatientRecordEntity::update)
+                .invoke(record);
+        return HttpResponses.ok();
+    }
+
 
     @Delete("/patient/{patientId}")
     public HttpResponse delete(String patientId) {

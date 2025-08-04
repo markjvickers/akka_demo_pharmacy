@@ -20,6 +20,12 @@ public class PatientRecordEntity
 
     private static final Logger logger = LoggerFactory.getLogger(PatientRecordEntity.class);
 
+    public record PatientMergeRequest(
+            PatientRecord updated,
+            String mergedPatientId
+    ) {}
+
+
     public PatientRecordEntity(EventSourcedEntityContext context) {
         this.entityId = context.entityId();
     }
@@ -64,11 +70,11 @@ public class PatientRecordEntity
                 .thenReply(newState -> Done.getInstance());
     }
 
-    public Effect<Done> merge(PatientRecord patientRecord, String mergeWithPatientId) {
-        return validate(patientRecord)
+    public Effect<Done> merge(PatientMergeRequest request) {
+        return validate(request.updated)
                 .orElseGet(() -> {
-                    var merged = new PatientRecordEvent.PatientRecordMerged(patientRecord, mergeWithPatientId);
-                    var updated = new PatientRecordEvent.PatientRecordUpdated(patientRecord);
+                    var merged = new PatientRecordEvent.PatientRecordMerged(request.updated, request.mergedPatientId);
+                    var updated = new PatientRecordEvent.PatientRecordUpdated(request.updated);
                     return effects()
                             .persist(merged, updated)
                             .thenReply(newState -> Done.getInstance());
