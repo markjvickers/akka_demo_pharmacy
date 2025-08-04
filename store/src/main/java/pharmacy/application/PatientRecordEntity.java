@@ -56,10 +56,9 @@ public class PatientRecordEntity
     }
 
     public Effect<Done> delete() {
-        return currentState() == null ?
-        effects().error("Already deleted") :
-        effects()
+        return effects()
                 .persist(new PatientRecordEvent.PatientRecordDeleted())
+                .deleteEntity()
                 .thenReply(newState -> Done.getInstance());
     }
 
