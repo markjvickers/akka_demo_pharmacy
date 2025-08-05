@@ -40,7 +40,6 @@ public class StorePatientRecordEntityTest {
                 "Canada",
                 "en",
                 true);
-
     }
 
     @Test
