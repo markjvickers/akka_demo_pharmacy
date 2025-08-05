@@ -7,8 +7,8 @@ import akka.javasdk.http.HttpClientProvider;
 import com.typesafe.config.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pharmacy.application.central.CentralClient;
-import pharmacy.application.central.CentralClientImpl;
+import pharmacy.application.central.client.CentralClient;
+import pharmacy.application.central.client.CentralClientImpl;
 
 @Setup
 public class Bootstrap implements ServiceSetup {

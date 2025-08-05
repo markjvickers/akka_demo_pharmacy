@@ -1,4 +1,4 @@
-package pharmacy.application.central.domain;
+package pharmacy.application.central.client.domain;
 
 import java.util.Optional;
 

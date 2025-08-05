@@ -1,4 +1,4 @@
-package pharmacy.application;
+package pharmacy.application.central.delivery;
 
 import akka.javasdk.annotations.ComponentId;
 import akka.javasdk.annotations.Consume;
@@ -7,26 +7,17 @@ import akka.javasdk.client.ComponentClient;
 import akka.javasdk.http.StrictResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pharmacy.application.central.CentralClient;
-import pharmacy.application.central.domain.StorePatientRecord;
+import pharmacy.application.PatientRecordEntity;
+import pharmacy.application.central.client.CentralClient;
+import pharmacy.application.central.client.domain.StorePatientRecord;
 import pharmacy.domain.PatientRecord;
-import pharmacy.domain.PatientRecordEvent;
 import pharmacy.domain.PatientRecordEvent.PatientRecordCreated;
 import pharmacy.domain.PatientRecordEvent.PatientRecordUpdated;
 import pharmacy.domain.PatientRecordEvent.PatientRecordDeleted;
 import pharmacy.domain.delivery.PatientRecordDelivery;
-import akka.javasdk.http.StrictResponse;
-import pharmacy.application.central.domain.StorePatientRecord;
-import pharmacy.domain.PatientRecord;
-import pharmacy.domain.PatientRecordEvent;
-import pharmacy.domain.PatientRecordEvent.*;
-import java.util.Set;
-import java.util.Optional;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
-import akka.javasdk.client.ComponentClient;
-import pharmacy.application.central.CentralClient;
+import java.util.Set;
+import java.util.function.Supplier;
 
 /**
  * Listens for patient record events, delivers them to central, and records the outcome.

@@ -1,4 +1,4 @@
-package pharmacy.application;
+package pharmacy.application.central.delivery;
 
 import akka.Done;
 import akka.javasdk.annotations.ComponentId;

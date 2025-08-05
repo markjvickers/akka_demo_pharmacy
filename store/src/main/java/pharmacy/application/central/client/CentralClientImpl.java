@@ -1,11 +1,11 @@
-package pharmacy.application.central;
+package pharmacy.application.central.client;
 
 import akka.javasdk.http.HttpClient;
 import akka.javasdk.http.HttpClientProvider;
 import akka.javasdk.http.StrictResponse;
 import akka.util.ByteString;
 import com.typesafe.config.Config;
-import pharmacy.application.central.domain.StorePatientRecord;
+import pharmacy.application.central.client.domain.StorePatientRecord;
 
 public class CentralClientImpl implements CentralClient {
 

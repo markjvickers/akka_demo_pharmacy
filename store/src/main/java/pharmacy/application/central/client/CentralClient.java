@@ -1,7 +1,7 @@
-package pharmacy.application.central;
+package pharmacy.application.central.client;
 import akka.javasdk.http.StrictResponse;
 import akka.util.ByteString;
-import pharmacy.application.central.domain.StorePatientRecord;
+import pharmacy.application.central.client.domain.StorePatientRecord;
 
 public interface CentralClient {
 
