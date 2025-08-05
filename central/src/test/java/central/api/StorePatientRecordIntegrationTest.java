@@ -1,8 +1,5 @@
 package central.api;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import akka.javasdk.JsonSupport;
 import akka.javasdk.http.StrictResponse;
 import akka.javasdk.testkit.TestKitSupport;
 import central.domain.StorePatientRecord;
@@ -14,9 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import akka.http.javadsl.model.StatusCode;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 public class StorePatientRecordIntegrationTest extends TestKitSupport {
