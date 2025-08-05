@@ -66,15 +66,23 @@ public class PatientRecordDeliverer extends Consumer {
            return effects().done();
        } else {
            var ok = delivery.get();
-           if (ok)
+           if (ok) {
+               markAsDelivered();
                return effects().done();
-           else
+           } else
                throw new RuntimeException("Delivery failed");
        }
     }
 
     private String getUpdateId() {
         return messageContext().eventSubject().get();
+    }
+
+    private akka.Done markAsDelivered() {
+        return componentClient
+                .forEventSourcedEntity(getUpdateId())
+                .method(PatientRecordDeliveryEntity::create)
+                .invoke(new PatientRecordDelivery(true));
     }
 
     private boolean alreadyDelivered() {
