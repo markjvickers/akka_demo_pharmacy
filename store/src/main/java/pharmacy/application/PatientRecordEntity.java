@@ -26,7 +26,6 @@ public class PatientRecordEntity
             String mergedPatientId
     ) {}
 
-
     public PatientRecordEntity(EventSourcedEntityContext context) {
         this.entityId = context.entityId();
     }
