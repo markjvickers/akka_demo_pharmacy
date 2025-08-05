@@ -75,7 +75,7 @@ public class PatientRecordDeliverer extends Consumer {
     }
 
     private String getUpdateId() {
-        return messageContext().eventSubject().get();
+        return messageContext().metadata().asCloudEvent().id();
     }
 
     private akka.Done markAsDelivered() {
@@ -109,7 +109,10 @@ public class PatientRecordDeliverer extends Consumer {
     }
 
     private boolean isValid(StrictResponse<?> response, Set<String> allowedStatuses) {
-        return allowedStatuses.contains(response.status().toString());
+        var status = response.status();
+        var allowed = allowedStatuses.contains(response.status().toString());
+        logger.info("isValid check, status={}, allowed={}", status, allowed);
+        return allowed;
     }
 
     private StorePatientRecord fromPatientRecord(PatientRecord pr) {
