@@ -49,7 +49,7 @@ public class StorePatientRecordEndpoint extends AbstractHttpEndpoint {
     @Put("/patient")
     public HttpResponse addRecord(StorePatientRecord record) {
         var id = StorePatientRecordId.fromRecord(record).toString();
-        logger.info("Adding patient record with id={}, patient_id=", id);
+        logger.info("Adding patient record with id={}", id);
         componentClient
                 .forEventSourcedEntity(id)
                 .method(StorePatientRecordEntity::create)
