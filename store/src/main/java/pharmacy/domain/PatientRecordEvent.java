@@ -11,7 +11,7 @@ public sealed interface PatientRecordEvent {
     record PatientRecordUpdated(PatientRecord patientRecord) implements PatientRecordEvent {}
 
     @TypeName("patient-record-deleted")
-    record PatientRecordDeleted() implements PatientRecordEvent {}
+    record PatientRecordDeleted(String pharmacyId, String patientId) implements PatientRecordEvent {}
 
     @TypeName("patient-record-merged")
     record PatientRecordMerged(PatientRecord updated, String mergedWithPatientId) implements PatientRecordEvent {}

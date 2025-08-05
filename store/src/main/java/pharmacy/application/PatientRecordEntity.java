@@ -89,7 +89,7 @@ public class PatientRecordEntity
         else if(isDeleted())
             return effects().error("PatientRecord expunged");
         else return effects()
-                .persist(new PatientRecordEvent.PatientRecordDeleted())
+                .persist(new PatientRecordEvent.PatientRecordDeleted(currentState().pharmacyId(), currentState().patientId()))
                 .deleteEntity()
                 .thenReply(newState -> Done.getInstance());
     }
