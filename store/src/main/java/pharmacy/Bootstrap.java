@@ -7,12 +7,13 @@ import akka.javasdk.http.HttpClientProvider;
 import com.typesafe.config.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pharmacy.application.central.CentralClient;
+import pharmacy.application.central.CentralClientImpl;
 
 @Setup
 public class Bootstrap implements ServiceSetup {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
-    private final String CENTRAL_ROUTE = "store.central-route";
     private final HttpClientProvider httpClientProvider;
     private final Config config;
 
@@ -27,17 +28,9 @@ public class Bootstrap implements ServiceSetup {
             @SuppressWarnings("unchecked")
             @Override
             public <T> T getDependency(Class<T> clazz) {
-//                if (clazz == WeatherService.class) {
-//                    if (
-//                            System.getenv(WEATHER_API_KEY) != null &&
-//                                    !System.getenv(WEATHER_API_KEY).isEmpty()
-//                    ) {
-//                        return (T) new WeatherServiceImpl(httpClientProvider);
-//                    } else {
-//                        // If the API key is not set, return a fake implementation
-//                        return (T) new FakeWeatherService();
-//                    }
-//                }
+                if (clazz == CentralClient.class) {
+                  return (T) new CentralClientImpl(config, httpClientProvider);
+                }
                 return null;
             }
         };
