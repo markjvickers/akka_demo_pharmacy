@@ -19,8 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import central.application.StorePatientRecordEntity;
 
-// tag::top[]
-
 @Acl(allow = @Acl.Matcher(principal = Acl.Principal.INTERNET))
 //@JWT(validate = JWT.JwtMethodMode.BEARER_TOKEN)
 @HttpEndpoint("/patients")
@@ -34,23 +32,19 @@ public class StorePatientRecordEndpoint extends AbstractHttpEndpoint {
         this.componentClient = componentClient;
     }
 
-//    @Get("/{cartId}")
-//    public ShoppingCartView.Cart get(String cartId) {
-//        logger.info("Get cart id={}", cartId);
-//
-//        var userId = requestContext().getJwtClaims().subject().get();
-//
-//        var cart = componentClient
-//                .forView()
-//                .method(ShoppingCartView::getCart) // <1>
-//                .invoke(cartId);
-//
-//        if (cart.userId().trim().equals(userId)) {
-//            return cart;
-//        } else {
-//            throw HttpException.error(StatusCodes.NOT_FOUND, "no such cart");
-//        }
-//    }
+    @Get("/{store_patient_id}")
+    public StorePatientRecord get(String store_patient_id) {
+        logger.info("Get patient with id={}", store_patient_id);
+        var record = componentClient
+                .forEventSourcedEntity(store_patient_id)
+                .method(StorePatientRecordEntity::getRecord) // <1>
+                .invoke();
+        if (record.isPresent()) {
+            return record.get();
+        } else {
+            throw HttpException.error(StatusCodes.NOT_FOUND, "No such PatientRecord");
+        }
+    }
 
     @Put("/patient")
     public HttpResponse addRecord(StorePatientRecord record) {
@@ -64,11 +58,11 @@ public class StorePatientRecordEndpoint extends AbstractHttpEndpoint {
     }
 
 
-    @Delete("/patient")
-    public HttpResponse deleteRecord(StorePatientRecordId id) {
-        logger.info("Deleting patient record with id={}", id);
+    @Delete("/{store_patient_id}")
+    public HttpResponse deleteRecord(String store_patient_id) {
+        logger.info("Deleting store patient record with id={}", store_patient_id);
         componentClient
-                .forEventSourcedEntity(id.toString())
+                .forEventSourcedEntity(store_patient_id)
                 .method(StorePatientRecordEntity::delete)
                 .invoke();
         return HttpResponses.ok();
