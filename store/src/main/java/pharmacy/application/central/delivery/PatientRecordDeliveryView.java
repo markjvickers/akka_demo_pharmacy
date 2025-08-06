@@ -6,8 +6,6 @@ import akka.javasdk.view.TableUpdater;
 import akka.javasdk.view.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pharmacy.application.PatientRecordEntity;
-import pharmacy.domain.PatientRecordEvent;
 import akka.javasdk.annotations.Query;
 import akka.javasdk.annotations.Table;
 import pharmacy.domain.delivery.PatientRecordDeliveryEvent;
@@ -19,7 +17,7 @@ import pharmacy.domain.delivery.PatientRecordDeliveryEvent;
  * but haven't found a way to do so.
  * Instead, the Endpoint will invoke it twice.
  */
-@ComponentId("patient-record-delivery-view")
+//@ComponentId("patient-record-delivery-view")
 public class PatientRecordDeliveryView extends View {
 
     private static final Logger logger = LoggerFactory.getLogger(PatientRecordDeliveryView.class);

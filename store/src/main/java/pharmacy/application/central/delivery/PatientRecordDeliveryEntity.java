@@ -6,8 +6,12 @@ import akka.javasdk.eventsourcedentity.EventSourcedEntity;
 import akka.javasdk.eventsourcedentity.EventSourcedEntityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pharmacy.domain.PatientRecord;
+import pharmacy.domain.PatientRecordEvent;
 import pharmacy.domain.delivery.PatientRecordDelivery;
 import pharmacy.domain.delivery.PatientRecordDeliveryEvent;
+
+import java.util.Optional;
 
 /**
  * A record of deliveries.
@@ -26,26 +30,28 @@ public class PatientRecordDeliveryEntity
         this.entityId = context.entityId();
     }
 
+    public record PatientRecordDeliveryRequest(String updateType, Optional<PatientRecord> record, String pharmacyId, String patientRecordId) {}
+
     @Override
     public PatientRecordDelivery emptyState() {
-        return new PatientRecordDelivery("", false);
+        return new PatientRecordDelivery("", Optional.empty(), "", "", false);
     }
 
-    public Effect<Done> create(String patientId) {
-        if(!currentState().patientId().isEmpty()) {
+    public Effect<Done> create(PatientRecordDeliveryRequest request) {
+        if(currentState().isDefined()) {
             logger.info("PatientRecordDelivery already created, id={}", entityId);
             return effects().reply(Done.getInstance());
          }
         if(currentState().delivered())
             return alreadyDelivered();
-        logger.info("PatientRecordDelivery required, id={}, patientId={}", entityId, patientId);
+        logger.info("PatientRecordDelivery required, id={}", entityId);
         return effects()
-                .persist(new PatientRecordDeliveryEvent.PatientRecordRequired(patientId))
+                .persist(new PatientRecordDeliveryEvent.PatientRecordRequired(request.updateType, request.record, request.pharmacyId, request.patientRecordId))
                 .thenReply(s -> Done.done());
     }
 
     public Effect<Done> markAsDelivered() {
-        if(currentState().patientId().isEmpty()) {
+        if(!currentState().isDefined()) {
             logger.info("PatientRecordDelivery does not exist, id={}", entityId);
             return effects().reply(Done.getInstance());
         }
@@ -68,7 +74,7 @@ public class PatientRecordDeliveryEntity
 
     public PatientRecordDelivery applyEvent(PatientRecordDeliveryEvent event) {
         return switch (event) {
-            case PatientRecordDeliveryEvent.PatientRecordRequired evt -> new PatientRecordDelivery(evt.patientId(), false);
+            case PatientRecordDeliveryEvent.PatientRecordRequired evt -> new PatientRecordDelivery(evt.updateType(), evt.record(), evt.pharmacyId(), evt.patientId(),false);
             case PatientRecordDeliveryEvent.PatientRecordDelivered evt -> currentState().withDelivery();
         };
     }
