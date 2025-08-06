@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pharmacy.application.central.client.CentralClient;
 import pharmacy.application.central.client.CentralClientImpl;
+import pharmacy.domain.PharmacyId;
 
 @Setup
 public class Bootstrap implements ServiceSetup {
@@ -30,6 +31,9 @@ public class Bootstrap implements ServiceSetup {
             public <T> T getDependency(Class<T> clazz) {
                 if (clazz == CentralClient.class) {
                   return (T) new CentralClientImpl(config, httpClientProvider);
+                }
+                if (clazz == PharmacyId.class) {
+                    return (T) new PharmacyId(config.getString("store.pharmacy-id"));
                 }
                 return null;
             }

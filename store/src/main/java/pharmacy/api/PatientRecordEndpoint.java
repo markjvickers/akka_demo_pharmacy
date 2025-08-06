@@ -20,17 +20,20 @@ import pharmacy.application.PatientRecordEntity.PatientMergeRequest;
 import pharmacy.application.central.delivery.PatientRecordDeliverySummary;
 import pharmacy.application.central.delivery.PatientRecordDeliveryView;
 import pharmacy.domain.PatientRecord;
+import pharmacy.domain.PharmacyId;
 
 @Acl(allow = @Acl.Matcher(principal = Acl.Principal.INTERNET))
 @HttpEndpoint("/patients")
 public class PatientRecordEndpoint {
 
     private final ComponentClient componentClient;
+    private final PharmacyId pharmacyId;
 
     private static final Logger logger = LoggerFactory.getLogger(PatientRecordEndpoint.class);
 
-    public PatientRecordEndpoint(ComponentClient componentClient) {
+    public PatientRecordEndpoint(ComponentClient componentClient, PharmacyId pharmacyId) {
         this.componentClient = componentClient;
+        this.pharmacyId = pharmacyId;
     }
 
     public record PatientCreateRequest(
@@ -125,10 +128,8 @@ public class PatientRecordEndpoint {
     }
 
     private PatientRecord getPatientRecordFromCreateRequest(PatientCreateRequest r, String patientId) {
-        //TODO: need to inject pharmacyId somehow
-        var pharmacyId = "101";
         return new PatientRecord(
-            pharmacyId,
+            pharmacyId.id(),
             patientId,
             r.firstName,
             r.lastName,
