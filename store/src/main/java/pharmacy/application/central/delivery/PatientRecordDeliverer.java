@@ -12,9 +12,6 @@ import pharmacy.application.central.client.CentralClient;
 import pharmacy.application.central.client.domain.StorePatientRecord;
 import pharmacy.domain.PatientRecord;
 import pharmacy.domain.PatientRecordEvent;
-import pharmacy.domain.delivery.PatientRecordDeliveryEvent;
-
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 
