@@ -1,6 +1,9 @@
 package pharmacy.domain.delivery;
 
-import pharmacy.domain.PatientRecordEvent;
+public record PatientRecordDelivery(String patientId, boolean delivered) {
 
-public record PatientRecordDelivery(Boolean delivered) {
+    public PatientRecordDelivery withDelivery() {
+        return new PatientRecordDelivery(patientId, true);
+    }
+
 }

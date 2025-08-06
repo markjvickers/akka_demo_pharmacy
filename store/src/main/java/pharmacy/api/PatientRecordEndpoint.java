@@ -17,6 +17,8 @@ import org.slf4j.LoggerFactory;
 import java.util.Optional;
 import pharmacy.application.PatientRecordEntity;
 import pharmacy.application.PatientRecordEntity.PatientMergeRequest;
+import pharmacy.application.central.delivery.PatientRecordDeliverySummary;
+import pharmacy.application.central.delivery.PatientRecordDeliveryView;
 import pharmacy.domain.PatientRecord;
 
 @Acl(allow = @Acl.Matcher(principal = Acl.Principal.INTERNET))
@@ -103,6 +105,23 @@ public class PatientRecordEndpoint {
                 .method(PatientRecordEntity::delete)
                 .invoke();
         return HttpResponses.ok();
+    }
+
+    @Get("/delivery/summary")
+    public PatientRecordDeliverySummary getDeliverySummary() {
+        var required = componentClient
+                .forView()
+                .method(PatientRecordDeliveryView::getRequiredDeliveryCount)
+                .invoke()
+                .amount();
+
+        var finished = componentClient
+                .forView()
+                .method(PatientRecordDeliveryView::getFinishedDeliveryCount)
+                .invoke()
+                .amount();
+
+        return new PatientRecordDeliverySummary(required, finished, (required-finished));
     }
 
     private PatientRecord getPatientRecordFromCreateRequest(PatientCreateRequest r, String patientId) {

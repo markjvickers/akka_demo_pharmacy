@@ -28,17 +28,38 @@ public class PatientRecordDeliveryEntity
 
     @Override
     public PatientRecordDelivery emptyState() {
-        return new PatientRecordDelivery(false);
+        return new PatientRecordDelivery("", false);
     }
 
-    public Effect<Done> create(PatientRecordDelivery delivery) {
-        if(currentState().delivered()) {
-            logger.info("PatientRecordDelivery has been already been delivered, id={}", entityId);
+    public Effect<Done> create(String patientId) {
+        if(!currentState().patientId().isEmpty()) {
+            logger.info("PatientRecordDelivery already created, id={}", entityId);
+            return effects().reply(Done.getInstance());
+         }
+        if(currentState().delivered())
+            return alreadyDelivered();
+        logger.info("PatientRecordDelivery required, id={}, patientId={}", entityId, patientId);
+        return effects()
+                .persist(new PatientRecordDeliveryEvent.PatientRecordRequired(patientId))
+                .thenReply(s -> Done.done());
+    }
+
+    public Effect<Done> markAsDelivered() {
+        if(currentState().patientId().isEmpty()) {
+            logger.info("PatientRecordDelivery does not exist, id={}", entityId);
             return effects().reply(Done.getInstance());
         }
+        if(currentState().delivered())
+            return alreadyDelivered();
+        logger.info("PatientRecordDelivery marking as delivered, id={}", entityId);
         return effects()
-                .persist(new PatientRecordDeliveryEvent.PatientRecordDelivered(delivery))
+                .persist(new PatientRecordDeliveryEvent.PatientRecordDelivered())
                 .thenReply(s -> Done.done());
+    }
+
+    private Effect<Done> alreadyDelivered() {
+        logger.info("PatientRecordDelivery has been already been delivered, id={}", entityId);
+        return effects().reply(Done.getInstance());
     }
 
     public ReadOnlyEffect<PatientRecordDelivery> getState() {
@@ -47,7 +68,8 @@ public class PatientRecordDeliveryEntity
 
     public PatientRecordDelivery applyEvent(PatientRecordDeliveryEvent event) {
         return switch (event) {
-            case PatientRecordDeliveryEvent.PatientRecordDelivered evt -> evt.patientRecordDelivery();
+            case PatientRecordDeliveryEvent.PatientRecordRequired evt -> new PatientRecordDelivery(evt.patientId(), false);
+            case PatientRecordDeliveryEvent.PatientRecordDelivered evt -> currentState().withDelivery();
         };
     }
 

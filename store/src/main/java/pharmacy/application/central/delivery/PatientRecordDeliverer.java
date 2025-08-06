@@ -56,6 +56,7 @@ public class PatientRecordDeliverer extends Consumer {
            logger.info("Already delivered {}, moving on", getUpdateId());
            return effects().done();
        } else {
+           requireDelivery();
            var ok = delivery.get();
            if (ok) {
                markAsDelivered();
@@ -65,15 +66,32 @@ public class PatientRecordDeliverer extends Consumer {
        }
     }
 
-    private String getUpdateId() {
-        return messageContext().metadata().asCloudEvent().id();
+    private String getPatientId() {
+        var cloudEvent = messageContext().metadata().asCloudEvent();
+        var subject = cloudEvent.subject().get();
+        return subject;
     }
 
-    private akka.Done markAsDelivered() {
+    private String getUpdateId() {
+        var cloudEvent = messageContext().metadata().asCloudEvent();
+        var updateId = cloudEvent.sequenceString().get();
+        return updateId;
+    }
+
+    private akka.Done requireDelivery() {
+        logger.info("Requiring delivery for {}", getUpdateId());
         return componentClient
                 .forEventSourcedEntity(getUpdateId())
                 .method(PatientRecordDeliveryEntity::create)
-                .invoke(new PatientRecordDelivery(true));
+                .invoke(getPatientId());
+    }
+
+    private akka.Done markAsDelivered() {
+        logger.info("Marking as delivered for {}", getUpdateId());
+        return componentClient
+                .forEventSourcedEntity(getUpdateId())
+                .method(PatientRecordDeliveryEntity::markAsDelivered)
+                .invoke();
     }
 
     private boolean alreadyDelivered() {
@@ -85,16 +103,19 @@ public class PatientRecordDeliverer extends Consumer {
     }
 
     private boolean forwardCreate(PatientRecord record) {
+        logger.info("forwarding create for patient record patientId={}, updateId={}", record.patientId(), getUpdateId());
         var result = centralClient.create(fromPatientRecord(record));
         return isValid(result, Set.of("200 OK", "400 Bad Request"));
     }
 
     private boolean forwardUpdate(PatientRecord record) {
+        logger.info("forwarding update for patient record patientId={}, updateId={}", record.patientId(), getUpdateId());
         var result = centralClient.update(fromPatientRecord(record));
         return isValid(result, Set.of("200 OK"));
     }
 
     private boolean forwardDelete(String pharmacyId, String patientId) {
+        logger.info("forwarding delete for patient record patientId={}, updateId={}", patientId, getUpdateId());
         var result = centralClient.delete(pharmacyId, patientId);
         return isValid(result, Set.of("200 OK"));
     }
