@@ -7,66 +7,42 @@ import akka.javasdk.consumer.Consumer;
 import akka.javasdk.http.StrictResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pharmacy.application.PatientRecordEntity;
 import pharmacy.application.central.client.CentralClient;
 import pharmacy.application.central.client.domain.StorePatientRecord;
 import pharmacy.domain.PatientRecord;
 import pharmacy.domain.PatientRecordEvent;
 import pharmacy.domain.delivery.PatientRecordDeliveryEvent;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 
-/**
- * Listens for patient record events, and begins the process for sending them.
- * Note: There's two steps here so that failures to deliver don't block subsequent delivery-requirement logging.
- */
-//@ComponentId("patient-record-delivery-complete")
-@Consume.FromEventSourcedEntity(value = PatientRecordDeliveryEntity.class, ignoreUnknown = true)
-public class PatientRecordDeliveryComplete extends Consumer {
+@ComponentId("patient-record-deliverer")
+@Consume.FromEventSourcedEntity(value = PatientRecordEntity.class, ignoreUnknown = true)
+public class PatientRecordDeliverer extends Consumer {
 
-    private static final Logger logger = LoggerFactory.getLogger(PatientRecordDeliveryComplete.class);
+
+    private static final Logger logger = LoggerFactory.getLogger(PatientRecordDeliverer.class);
 
     private final ComponentClient componentClient;
     private final CentralClient centralClient;
 
-    public PatientRecordDeliveryComplete(ComponentClient componentClient, CentralClient centralClient) {
+    public PatientRecordDeliverer(ComponentClient componentClient, CentralClient centralClient) {
         this.componentClient = componentClient;
         this.centralClient = centralClient;
     }
 
-    public Consumer.Effect onRequired(PatientRecordDeliveryEvent.PatientRecordRequired event) {
-        return switch (event.updateType()) {
-            case "Created" -> deliver(() -> forwardCreate(event.record().get()));
-            case "Updated" -> deliver(() -> forwardUpdate(event.record().get()));
-            case "Deleted" -> deliver(() -> forwardDelete(event.pharmacyId(), event.patientId()));
-            default -> effects().done();
-        };
+    public Consumer.Effect onCreate(PatientRecordEvent.PatientRecordCreated event) {
+        return deliver(() -> forwardCreate(event.patientRecord()));
     }
 
-    /**
-     * Common delivery algorithm for patient record CRUD.
-     */
-    private Consumer.Effect deliver(Supplier<Boolean> delivery) {
-        var ok = delivery.get();
-        if (ok) {
-            markAsDelivered();
-            return effects().done();
-        } else
-            throw new RuntimeException("Delivery failed");
+    public Consumer.Effect onUpdate(PatientRecordEvent.PatientRecordUpdated event) {
+        return deliver(() -> forwardUpdate(event.patientRecord()));
     }
 
-    //The entity id of the PatientRecordDelivery entity matches the sequence number of the PatientRecordEntity.
-    //The problem here is that updates could get out of order. Not so good.
-    private String getUpdateId() {
-        return messageContext().eventSubject().get();
-    }
-
-    private akka.Done markAsDelivered() {
-        logger.info("Marking as delivered for {}", getUpdateId());
-        return componentClient
-                .forEventSourcedEntity(getUpdateId())
-                .method(PatientRecordDeliveryEntity::markAsDelivered)
-                .invoke();
+    public Consumer.Effect onDelete(PatientRecordEvent.PatientRecordDeleted event) {
+        return  deliver(() -> forwardDelete(event.pharmacyId(), event.patientId()));
     }
 
     private boolean forwardCreate(PatientRecord record) {
@@ -92,6 +68,43 @@ public class PatientRecordDeliveryComplete extends Consumer {
         var allowed = allowedStatuses.contains(response.status().toString());
         logger.info("isValid check, status={}, allowed={}", status, allowed);
         return allowed;
+    }
+
+    /**
+     * Common delivery algorithm for patient record CRUD.
+     */
+    private Consumer.Effect deliver(Supplier<Boolean> delivery) {
+        if (alreadyDelivered()) {
+            logger.info("Already delivered {}, moving on", getUpdateId());
+            return effects().done();
+        } else {
+            var ok = delivery.get();
+            if (ok) {
+                markAsDelivered();
+                return effects().done();
+            } else
+                throw new RuntimeException("Delivery failed");
+        }
+    }
+
+    private String getUpdateId() {
+        return UpdateIdUtility.getUpdateId(messageContext());
+    }
+
+    private boolean alreadyDelivered() {
+        return componentClient
+                .forEventSourcedEntity(getUpdateId())
+                .method(PatientRecordDeliveryEntity::getState)
+                .invoke()
+                .delivered();
+    }
+
+    private akka.Done markAsDelivered() {
+        logger.info("Marking as delivered for {}", getUpdateId());
+        return componentClient
+                .forEventSourcedEntity(getUpdateId())
+                .method(PatientRecordDeliveryEntity::markAsDelivered)
+                .invoke();
     }
 
     private StorePatientRecord fromPatientRecord(PatientRecord pr) {

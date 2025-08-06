@@ -34,19 +34,20 @@ public class PatientRecordDeliveryEntity
 
     @Override
     public PatientRecordDelivery emptyState() {
-        return new PatientRecordDelivery("", Optional.empty(), "", "", false);
+        return new PatientRecordDelivery("", false);
     }
 
-    public Effect<Done> create(PatientRecordDeliveryRequest request) {
+    public Effect<Done> create(String patientId) {
         if(currentState().isDefined()) {
             logger.info("PatientRecordDelivery already created, id={}", entityId);
             return effects().reply(Done.getInstance());
          }
         if(currentState().delivered())
             return alreadyDelivered();
+
         logger.info("PatientRecordDelivery required, id={}", entityId);
         return effects()
-                .persist(new PatientRecordDeliveryEvent.PatientRecordRequired(request.updateType, request.record, request.pharmacyId, request.patientRecordId))
+                .persist(new PatientRecordDeliveryEvent.PatientRecordRequired(patientId))
                 .thenReply(s -> Done.done());
     }
 
@@ -74,8 +75,8 @@ public class PatientRecordDeliveryEntity
 
     public PatientRecordDelivery applyEvent(PatientRecordDeliveryEvent event) {
         return switch (event) {
-            case PatientRecordDeliveryEvent.PatientRecordRequired evt -> new PatientRecordDelivery(evt.updateType(), evt.record(), evt.pharmacyId(), evt.patientId(),false);
-            case PatientRecordDeliveryEvent.PatientRecordDelivered evt -> currentState().withDelivery();
+            case PatientRecordDeliveryEvent.PatientRecordRequired evt -> new PatientRecordDelivery(evt.patientId(),false);
+            case PatientRecordDeliveryEvent.PatientRecordDelivered ignore -> currentState().withDelivery();
         };
     }
 

@@ -17,7 +17,7 @@ import pharmacy.domain.delivery.PatientRecordDeliveryEvent;
  * but haven't found a way to do so.
  * Instead, the Endpoint will invoke it twice.
  */
-//@ComponentId("patient-record-delivery-view")
+@ComponentId("patient-record-delivery-view")
 public class PatientRecordDeliveryView extends View {
 
     private static final Logger logger = LoggerFactory.getLogger(PatientRecordDeliveryView.class);
@@ -62,7 +62,7 @@ public class PatientRecordDeliveryView extends View {
             return effects().updateRow(new Delivery(updateId(), event.patientId(), false));
         }
 
-        public Effect<Delivery> onDelivered(PatientRecordDeliveryEvent.PatientRecordDelivered event) {
+        public Effect<Delivery> onDelivered(PatientRecordDeliveryEvent.PatientRecordDelivered ignore) {
             return effects().updateRow(rowState().withOk());
         }
 
