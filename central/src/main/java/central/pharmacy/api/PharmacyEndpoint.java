@@ -14,7 +14,6 @@ import akka.javasdk.http.AbstractHttpEndpoint;
 import akka.javasdk.http.HttpException;
 import akka.javasdk.http.HttpResponses;
 import central.pharmacy.domain.Pharmacy;
-import central.pharmacy.domain.PharmacyId;
 import central.pharmacy.application.PharmacyEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,8 +46,8 @@ public class PharmacyEndpoint extends AbstractHttpEndpoint {
     }
 
     @Put("/pharmacy")
-    public HttpResponse addRecord(Pharmacy pharmacy) {
-        var id = new PharmacyId(pharmacy.pharmacyId()).toString();
+    public HttpResponse add(Pharmacy pharmacy) {
+        var id = pharmacy.pharmacyId();
         logger.info("Adding pharmacy with id={}", id);
         componentClient
                 .forEventSourcedEntity(id)
@@ -70,7 +69,7 @@ public class PharmacyEndpoint extends AbstractHttpEndpoint {
 
     @Post("/pharmacy")
     public HttpResponse updateRecord(Pharmacy pharmacy) {
-        var id = new PharmacyId(pharmacy.pharmacyId()).toString();
+        var id = pharmacy.pharmacyId();
         logger.info("Updating pharmacy with id={}", id);
         componentClient
                 .forEventSourcedEntity(id)
