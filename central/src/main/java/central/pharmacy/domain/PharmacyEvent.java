@@ -2,7 +2,7 @@ package central.pharmacy.domain;
 
 import akka.javasdk.annotations.TypeName;
 
-public interface PharmacyEvent {
+public sealed interface PharmacyEvent {
 
     @TypeName("pharmacy-created")
     record PharmacyCreated(Pharmacy pharmacy) implements PharmacyEvent {}
