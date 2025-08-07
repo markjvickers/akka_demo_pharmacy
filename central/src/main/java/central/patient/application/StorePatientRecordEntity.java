@@ -1,4 +1,4 @@
-package central.application;
+package central.patient.application;
 
 import akka.Done;
 import akka.javasdk.annotations.ComponentId;
@@ -6,10 +6,9 @@ import akka.javasdk.eventsourcedentity.EventSourcedEntity;
 import akka.javasdk.eventsourcedentity.EventSourcedEntityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import central.domain.StorePatientRecord;
-import central.domain.StorePatientRecordEvent;
+import central.patient.domain.StorePatientRecord;
+import central.patient.domain.StorePatientRecordEvent;
 
-import java.util.ArrayList;
 import java.util.Optional;
 
 @ComponentId("store-patient-record")

@@ -1,4 +1,4 @@
-package central.domain;
+package central.patient.domain;
 
 import akka.javasdk.annotations.TypeName;
 

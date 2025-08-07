@@ -1,4 +1,4 @@
-package central.api;
+package central.patient.api;
 
 import akka.http.javadsl.model.HttpResponse;
 import akka.http.javadsl.model.StatusCodes;
@@ -13,11 +13,11 @@ import akka.javasdk.client.ComponentClient;
 import akka.javasdk.http.AbstractHttpEndpoint;
 import akka.javasdk.http.HttpException;
 import akka.javasdk.http.HttpResponses;
-import central.domain.StorePatientRecord;
-import central.domain.StorePatientRecordId;
+import central.patient.domain.StorePatientRecord;
+import central.patient.domain.StorePatientRecordId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import central.application.StorePatientRecordEntity;
+import central.patient.application.StorePatientRecordEntity;
 
 @Acl(allow = @Acl.Matcher(principal = Acl.Principal.INTERNET))
 //@JWT(validate = JWT.JwtMethodMode.BEARER_TOKEN)

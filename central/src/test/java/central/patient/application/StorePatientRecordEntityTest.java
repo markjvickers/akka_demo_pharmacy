@@ -1,4 +1,4 @@
-package central.application;
+package central.patient.application;
 
 import akka.Done;
 import akka.javasdk.testkit.EventSourcedTestKit;
@@ -7,9 +7,9 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import central.domain.StorePatientRecord;
-import central.domain.StorePatientRecordEvent;
-import central.domain.StorePatientRecordEvent.StorePatientRecordCreated;
+import central.patient.domain.StorePatientRecord;
+import central.patient.domain.StorePatientRecordEvent;
+import central.patient.domain.StorePatientRecordEvent.StorePatientRecordCreated;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;

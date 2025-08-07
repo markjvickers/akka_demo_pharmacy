@@ -1,4 +1,4 @@
-package central.domain;
+package central.patient.domain;
 
 public record StorePatientRecordId(String pharmacyId, String patientId) {
 

@@ -1,4 +1,4 @@
-package central.domain;
+package central.patient.domain;
 
 import java.util.Optional;
 

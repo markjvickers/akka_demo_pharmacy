@@ -1,9 +1,9 @@
-package central.api;
+package central.patient.api;
 
 import akka.javasdk.http.StrictResponse;
 import akka.javasdk.testkit.TestKitSupport;
-import central.domain.StorePatientRecord;
-import central.domain.StorePatientRecordId;
+import central.patient.domain.StorePatientRecord;
+import central.patient.domain.StorePatientRecordId;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.Optional;
 
