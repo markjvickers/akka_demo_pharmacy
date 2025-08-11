@@ -1,9 +1,7 @@
 package pharmacy.api;
 
-
-import akka.http.javadsl.model.StatusCodes;
 import akka.http.javadsl.model.HttpResponse;
-import akka.javasdk.http.HttpException;
+import akka.http.javadsl.model.StatusCodes;
 import akka.javasdk.annotations.Acl;
 import akka.javasdk.annotations.http.Delete;
 import akka.javasdk.annotations.http.Get;
@@ -11,12 +9,15 @@ import akka.javasdk.annotations.http.HttpEndpoint;
 import akka.javasdk.annotations.http.Post;
 import akka.javasdk.annotations.http.Put;
 import akka.javasdk.client.ComponentClient;
+import akka.javasdk.http.HttpException;
 import akka.javasdk.http.HttpResponses;
+import java.util.List;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.Optional;
 import pharmacy.application.PatientRecordEntity;
 import pharmacy.application.PatientRecordEntity.PatientMergeRequest;
+import pharmacy.application.PatientSearchView;
 import pharmacy.application.central.delivery.PatientRecordDeliverySummary;
 import pharmacy.application.central.delivery.PatientRecordDeliveryView;
 import pharmacy.domain.PatientRecord;
@@ -29,42 +30,48 @@ public class PatientRecordEndpoint {
     private final ComponentClient componentClient;
     private final PharmacyId pharmacyId;
 
-    private static final Logger logger = LoggerFactory.getLogger(PatientRecordEndpoint.class);
+    private static final Logger logger = LoggerFactory.getLogger(
+        PatientRecordEndpoint.class
+    );
 
-    public PatientRecordEndpoint(ComponentClient componentClient, PharmacyId pharmacyId) {
+    public PatientRecordEndpoint(
+        ComponentClient componentClient,
+        PharmacyId pharmacyId
+    ) {
         this.componentClient = componentClient;
         this.pharmacyId = pharmacyId;
     }
 
     public record PatientCreateRequest(
-            String firstName,
-            String lastName,
-            Optional<String> prefName,
-            String dateOfBirth,
-            String phoneNumber,
-            String provHealthNumber,
-            Optional<String> unitNumber,
-            String streetNumber,
-            String streetName,
-            String city,
-            String province,
-            String postalCode,
-            String country,
-            String langPref,
-            boolean smsOptInPref
+        String firstName,
+        String lastName,
+        Optional<String> prefName,
+        String dateOfBirth,
+        String phoneNumber,
+        String provHealthNumber,
+        Optional<String> unitNumber,
+        String streetNumber,
+        String streetName,
+        String city,
+        String province,
+        String postalCode,
+        String country,
+        String langPref,
+        boolean smsOptInPref
     ) {}
 
     @Get("/{patientId}")
     public PatientRecord get(String patientId) {
         logger.info("Get patient id={}", patientId);
         var record = componentClient
-                .forEventSourcedEntity(patientId)
-                .method(PatientRecordEntity::getRecord)
-                .invoke();
-        if(record.isPresent())
-            return record.get();
-        else
-            throw HttpException.error(StatusCodes.NOT_FOUND, "Patient not found");
+            .forEventSourcedEntity(patientId)
+            .method(PatientRecordEntity::getRecord)
+            .invoke();
+        if (record.isPresent()) return record.get();
+        else throw HttpException.error(
+            StatusCodes.NOT_FOUND,
+            "Patient not found"
+        );
     }
 
     @Put("/patient")
@@ -73,19 +80,23 @@ public class PatientRecordEndpoint {
         logger.info("Handling create patient request, id={}", patientId);
         var record = getPatientRecordFromCreateRequest(request, patientId);
         componentClient
-                .forEventSourcedEntity(patientId)
-                .method(PatientRecordEntity::create)
-                .invoke(record);
+            .forEventSourcedEntity(patientId)
+            .method(PatientRecordEntity::create)
+            .invoke(record);
         return patientId;
     }
 
     @Post("/patient/merge")
     public HttpResponse merge(PatientMergeRequest mergeRequest) {
-        logger.info("Request to merge patient id={} with patient {}", mergeRequest.updated().patientId(), mergeRequest.mergedPatientId());
+        logger.info(
+            "Request to merge patient id={} with patient {}",
+            mergeRequest.updated().patientId(),
+            mergeRequest.mergedPatientId()
+        );
         componentClient
-                .forEventSourcedEntity(mergeRequest.updated().patientId())
-                .method(PatientRecordEntity::merge)
-                .invoke(mergeRequest);
+            .forEventSourcedEntity(mergeRequest.updated().patientId())
+            .method(PatientRecordEntity::merge)
+            .invoke(mergeRequest);
         return HttpResponses.ok();
     }
 
@@ -93,41 +104,127 @@ public class PatientRecordEndpoint {
     public HttpResponse update(String patientId, PatientRecord record) {
         logger.info("Request to update patient id={}", patientId);
         componentClient
-                .forEventSourcedEntity(patientId)
-                .method(PatientRecordEntity::update)
-                .invoke(record);
+            .forEventSourcedEntity(patientId)
+            .method(PatientRecordEntity::update)
+            .invoke(record);
         return HttpResponses.ok();
     }
-
 
     @Delete("/patient/{patientId}")
     public HttpResponse delete(String patientId) {
         logger.info("Request to delete patient id={}", patientId);
         componentClient
-                .forEventSourcedEntity(patientId)
-                .method(PatientRecordEntity::delete)
-                .invoke();
+            .forEventSourcedEntity(patientId)
+            .method(PatientRecordEntity::delete)
+            .invoke();
         return HttpResponses.ok();
     }
 
     @Get("/delivery/summary")
     public PatientRecordDeliverySummary getDeliverySummary() {
         var required = componentClient
-                .forView()
-                .method(PatientRecordDeliveryView::getRequiredDeliveryCount)
-                .invoke()
-                .amount();
+            .forView()
+            .method(PatientRecordDeliveryView::getRequiredDeliveryCount)
+            .invoke()
+            .amount();
 
         var finished = componentClient
-                .forView()
-                .method(PatientRecordDeliveryView::getFinishedDeliveryCount)
-                .invoke()
-                .amount();
+            .forView()
+            .method(PatientRecordDeliveryView::getFinishedDeliveryCount)
+            .invoke()
+            .amount();
 
-        return new PatientRecordDeliverySummary(required, finished, (required-finished));
+        return new PatientRecordDeliverySummary(
+            required,
+            finished,
+            (required - finished)
+        );
     }
 
-    private PatientRecord getPatientRecordFromCreateRequest(PatientCreateRequest r, String patientId) {
+    public record PatientSearchCriteria(
+        Optional<String> firstName,
+        Optional<String> lastName,
+        Optional<String> searchTerm
+    ) {}
+
+    @Get("/search")
+    public List<PatientRecord> searchPatients(PatientSearchCriteria criteria) {
+        logger.info(
+            "Search request - firstName: {}, lastName: {}, searchTerm: {}",
+            criteria.firstName().orElse("N/A"),
+            criteria.lastName().orElse("N/A"),
+            criteria.searchTerm().orElse("N/A")
+        );
+
+        String firstName = criteria
+            .firstName()
+            .filter(s -> !s.trim().isEmpty())
+            .map(String::trim)
+            .orElse(null);
+        String lastName = criteria
+            .lastName()
+            .filter(s -> !s.trim().isEmpty())
+            .map(String::trim)
+            .orElse(null);
+        String searchTerm = criteria
+            .searchTerm()
+            .filter(s -> !s.trim().isEmpty())
+            .map(String::trim)
+            .orElse(null);
+
+        if (firstName != null && lastName != null) {
+            // Search by both first and last name
+            return componentClient
+                .forView()
+                .method((PatientSearchView view) ->
+                    view.searchByFirstAndLastName(
+                        new PatientSearchView.FirstAndLastNameSearchCriteria(
+                            firstName,
+                            lastName
+                        )
+                    )
+                )
+                .invoke()
+                .list();
+        } else if (firstName != null) {
+            // Search by first name only
+            return componentClient
+                .forView()
+                .method((PatientSearchView view) ->
+                    view.searchByFirstName(firstName)
+                )
+                .invoke()
+                .list();
+        } else if (lastName != null) {
+            // Search by last name only
+            return componentClient
+                .forView()
+                .method((PatientSearchView view) ->
+                    view.searchByLastName(lastName)
+                )
+                .invoke()
+                .list();
+        } else if (searchTerm != null) {
+            // Search by general term (matches first or last name)
+            return componentClient
+                .forView()
+                .method((PatientSearchView view) ->
+                    view.searchByName(searchTerm)
+                )
+                .invoke()
+                .list();
+        } else {
+            // No search parameters provided
+            throw HttpException.badRequest(
+                "At least one search parameter (firstName, lastName, or searchTerm) must be provided"
+            );
+        }
+    }
+
+    private PatientRecord getPatientRecordFromCreateRequest(
+        PatientCreateRequest r,
+        String patientId
+    ) {
         return new PatientRecord(
             pharmacyId.id(),
             patientId,
@@ -148,5 +245,4 @@ public class PatientRecordEndpoint {
             r.smsOptInPref
         );
     }
-
 }
