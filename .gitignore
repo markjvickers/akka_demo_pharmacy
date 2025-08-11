@@ -6,3 +6,5 @@
 /provincial/.idea
 /.idea
 **/.DS_Store
+**/bin
+**/.project
