@@ -92,7 +92,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"pharmacyId\": \"101\",\n  \"patientId\": \"a0ae1e15-bb87-4a36-90fe-a0a7e63aca4a\",    \n  \"firstName\": \"Alicia\",\n  \"lastName\": \"Johnson\",\n  \"prefName\": \"Ally\",\n  \"dateOfBirth\": \"1985-07-14\",\n  \"phoneNumber\": \"555-123-4567\",\n  \"provHealthNumber\": \"PHN1234567\",\n  \"unitNumber\": \"5B\",\n  \"streetNumber\": \"123\",\n  \"streetName\": \"Main Street\",\n  \"city\": \"Vancouver\",\n  \"province\": \"BC\",\n  \"postalCode\": \"V5K0A1\",\n  \"country\": \"Canada\",\n  \"langPref\": \"en\",\n  \"smsOptInPref\": true\n}",
+					"raw": "{\n  \"pharmacyId\": \"101\",\n  \"patientId\": \"b6067b1b-2214-489d-b4fb-8316f8a1cfb7\",    \n  \"firstName\": \"Alicia\",\n  \"lastName\": \"Johnson\",\n  \"prefName\": \"Ally\",\n  \"dateOfBirth\": \"1985-07-14\",\n  \"phoneNumber\": \"555-123-4567\",\n  \"provHealthNumber\": \"PHN1234567\",\n  \"unitNumber\": \"5B\",\n  \"streetNumber\": \"123\",\n  \"streetName\": \"Main Street\",\n  \"city\": \"Vancouver\",\n  \"province\": \"BC\",\n  \"postalCode\": \"V5K0A1\",\n  \"country\": \"Canada\",\n  \"langPref\": \"en\",\n  \"smsOptInPref\": true\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -100,7 +100,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://127.0.0.1:9000/patients/patient/a0ae1e15-bb87-4a36-90fe-a0a7e63aca4a",
+					"raw": "http://127.0.0.1:9000/patients/patient/dff11491-0409-47dc-b504-918c86249ee2",
 					"protocol": "http",
 					"host": [
 						"127",
@@ -112,7 +112,7 @@
 					"path": [
 						"patients",
 						"patient",
-						"a0ae1e15-bb87-4a36-90fe-a0a7e63aca4a"
+						"dff11491-0409-47dc-b504-918c86249ee2"
 					]
 				}
 			},
@@ -146,6 +146,30 @@
 						"patients",
 						"patient",
 						"merge"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Patient Record Delivery Summary",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:9000/patients/delivery/summary",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "9000",
+					"path": [
+						"patients",
+						"delivery",
+						"summary"
 					]
 				}
 			},
