@@ -115,6 +115,116 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Get Pharmacy",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:9001/pharmacies/101",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "9001",
+					"path": [
+						"pharmacies",
+						"101"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Pharmacy",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"pharmacyId\": \"101\",\n  \"address\": \"123 Rue Sainte-Catherine Ouest, Montréal, QC H3B 1A7\",\n  \"phoneNumber\": \"514-555-1234\",\n  \"version\": \"1.0\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:9001/pharmacies/pharmacy",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "9001",
+					"path": [
+						"pharmacies",
+						"pharmacy"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Pharmacy",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"pharmacyId\": \"101\",\n  \"address\": \"123 Rue Sainte-Catherine Ouest, Montréal, QC H3B 1A7\",\n  \"phoneNumber\": \"514-867-5309\",\n  \"version\": \"1.0\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:9001/pharmacies/pharmacy",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "9001",
+					"path": [
+						"pharmacies",
+						"pharmacy"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Pharmacy",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:9001/pharmacies/101",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "9001",
+					"path": [
+						"pharmacies",
+						"101"
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }
