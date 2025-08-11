@@ -61,8 +61,14 @@ const api = {
     if (searchParams.lastName) params.append("lastName", searchParams.lastName);
     if (searchParams.searchTerm)
       params.append("searchTerm", searchParams.searchTerm);
-
-    return this.request(`/patients/search?${params.toString()}`);
+    return this.request(`/patients/search`, {
+      method: "POST",
+      body: JSON.stringify({
+        firstName: searchParams.firstName,
+        lastName: searchParams.lastName,
+        searchTerm: searchParams.searchTerm,
+      }),
+    });
   },
 
   async mergePatients(mergeData) {

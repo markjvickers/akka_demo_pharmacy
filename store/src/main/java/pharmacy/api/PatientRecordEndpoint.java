@@ -154,7 +154,7 @@ public class PatientRecordEndpoint {
             .orElse(null);
     }
 
-    @Get("/search")
+    @Post("/search")
     public List<PatientRecord> searchPatients(PatientSearchCriteria criteria) {
         logger.info(
             "Search request - firstName: {}, lastName: {}, searchTerm: {}",
