@@ -1,9 +1,9 @@
 {
   "info": {
-    "_postman_id": "5cabdb71-0457-4edd-b8bd-f9e284d7ab9c",
+    "_postman_id": "c04af981-5e79-4409-8976-c17e35db5659",
     "name": "store",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "34380732"
+    "_exporter_id": "39439868"
   },
   "item": [
     {
@@ -118,26 +118,28 @@
     },
     {
       "name": "Search Patients",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
       "request": {
         "method": "GET",
         "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"lastName\": \"Vickers\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
         "url": {
-          "raw": "http://127.0.0.1:9000/patients/search?firstName=Alice&lastName=Johnson",
+          "raw": "http://127.0.0.1:9000/patients/search",
           "protocol": "http",
           "host": ["127", "0", "0", "1"],
           "port": "9000",
           "path": ["patients", "search"],
           "query": [
-            {
-              "key": "firstName",
-              "value": "Alice",
-              "description": "Search by first name (case insensitive, starts with)"
-            },
-            {
-              "key": "lastName",
-              "value": "Johnson",
-              "description": "Search by last name (case insensitive, starts with)"
-            },
             {
               "key": "searchTerm",
               "value": "",
@@ -151,21 +153,34 @@
     },
     {
       "name": "Search Patients by Term",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
       "request": {
         "method": "GET",
-        "header": [],
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"firstName\": \"Mark\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
         "url": {
-          "raw": "http://127.0.0.1:9000/patients/search?searchTerm=Alice",
+          "raw": "http://127.0.0.1:9000/patients/search",
           "protocol": "http",
           "host": ["127", "0", "0", "1"],
           "port": "9000",
           "path": ["patients", "search"],
           "query": [
-            {
-              "key": "searchTerm",
-              "value": "Alice",
-              "description": "General search term (matches first or last name)"
-            },
             {
               "key": "firstName",
               "value": "",
