@@ -1,0 +1,1271 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Central Pharmacy Management System</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+            rel="stylesheet"
+        />
+        <link
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+            rel="stylesheet"
+        />
+        <style>
+            :root {
+                --primary-color: #2563eb;
+                --primary-dark: #1d4ed8;
+                --secondary-color: #10b981;
+                --secondary-dark: #059669;
+                --accent-color: #f59e0b;
+                --danger-color: #ef4444;
+                --danger-dark: #dc2626;
+                --warning-color: #f59e0b;
+                --success-color: #10b981;
+                --info-color: #3b82f6;
+
+                --gray-50: #f9fafb;
+                --gray-100: #f3f4f6;
+                --gray-200: #e5e7eb;
+                --gray-300: #d1d5db;
+                --gray-400: #9ca3af;
+                --gray-500: #6b7280;
+                --gray-600: #4b5563;
+                --gray-700: #374151;
+                --gray-800: #1f2937;
+                --gray-900: #111827;
+
+                --white: #ffffff;
+                --black: #000000;
+
+                --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+                --shadow:
+                    0 1px 3px 0 rgb(0 0 0 / 0.1),
+                    0 1px 2px -1px rgb(0 0 0 / 0.1);
+                --shadow-md:
+                    0 4px 6px -1px rgb(0 0 0 / 0.1),
+                    0 2px 4px -2px rgb(0 0 0 / 0.1);
+                --shadow-lg:
+                    0 10px 15px -3px rgb(0 0 0 / 0.1),
+                    0 4px 6px -4px rgb(0 0 0 / 0.1);
+                --shadow-xl:
+                    0 20px 25px -5px rgb(0 0 0 / 0.1),
+                    0 8px 10px -6px rgb(0 0 0 / 0.1);
+
+                --radius-sm: 0.375rem;
+                --radius: 0.5rem;
+                --radius-md: 0.75rem;
+                --radius-lg: 1rem;
+                --radius-xl: 1.5rem;
+
+                --spacing-xs: 0.25rem;
+                --spacing-sm: 0.5rem;
+                --spacing: 1rem;
+                --spacing-md: 1.5rem;
+                --spacing-lg: 2rem;
+                --spacing-xl: 3rem;
+                --spacing-2xl: 4rem;
+
+                /* Animation variables */
+                --transition-fast: 0.15s ease;
+                --transition-normal: 0.3s ease;
+                --transition-slow: 0.5s ease;
+                --bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            }
+
+            /* Dark mode variables */
+            @media (prefers-color-scheme: dark) {
+                :root {
+                    --gray-50: #1f2937;
+                    --gray-100: #374151;
+                    --gray-200: #4b5563;
+                    --gray-300: #6b7280;
+                    --gray-400: #9ca3af;
+                    --gray-500: #d1d5db;
+                    --gray-600: #e5e7eb;
+                    --gray-700: #f3f4f6;
+                    --gray-800: #f9fafb;
+                    --gray-900: #ffffff;
+                    --white: #111827;
+                }
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family:
+                    "Inter",
+                    -apple-system,
+                    BlinkMacSystemFont,
+                    "Segoe UI",
+                    Roboto,
+                    sans-serif;
+                background: linear-gradient(
+                    135deg,
+                    var(--gray-50) 0%,
+                    var(--gray-100) 100%
+                );
+                color: var(--gray-900);
+                line-height: 1.6;
+                min-height: 100vh;
+            }
+
+            .container {
+                max-width: 1400px;
+                margin: 0 auto;
+                padding: 0 var(--spacing);
+            }
+
+            /* Header */
+            .header {
+                background: linear-gradient(
+                    135deg,
+                    var(--primary-color) 0%,
+                    var(--primary-dark) 100%
+                );
+                color: var(--white);
+                padding: var(--spacing-lg) 0;
+                box-shadow: var(--shadow-lg);
+                position: relative;
+                overflow: hidden;
+            }
+
+            .header::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="medical" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23medical)"/></svg>');
+                pointer-events: none;
+                animation: float 6s ease-in-out infinite;
+            }
+
+            @keyframes float {
+                0%,
+                100% {
+                    transform: translateY(0px);
+                }
+                50% {
+                    transform: translateY(-10px);
+                }
+            }
+
+            .header-content {
+                position: relative;
+                z-index: 1;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                flex-wrap: wrap;
+                gap: var(--spacing);
+            }
+
+            .logo {
+                display: flex;
+                align-items: center;
+                gap: var(--spacing-sm);
+                font-size: 1.75rem;
+                font-weight: 700;
+                letter-spacing: -0.025em;
+            }
+
+            .logo i {
+                font-size: 2rem;
+                color: var(--accent-color);
+            }
+
+            .nav {
+                display: flex;
+                gap: var(--spacing);
+            }
+
+            .nav-item {
+                background: rgba(255, 255, 255, 0.1);
+                color: var(--white);
+                border: none;
+                padding: var(--spacing-sm) var(--spacing-md);
+                border-radius: var(--radius-lg);
+                font-weight: 500;
+                cursor: pointer;
+                transition: all var(--transition-normal);
+                backdrop-filter: blur(10px);
+                position: relative;
+                overflow: hidden;
+            }
+
+            .nav-item::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(
+                    90deg,
+                    transparent,
+                    rgba(255, 255, 255, 0.2),
+                    transparent
+                );
+                transition: left 0.5s;
+            }
+
+            .nav-item:hover::before {
+                left: 100%;
+            }
+
+            .nav-item:hover,
+            .nav-item.active {
+                background: rgba(255, 255, 255, 0.2);
+                transform: translateY(-2px) scale(1.05);
+                box-shadow: var(--shadow-md);
+            }
+
+            .nav-item:active {
+                transform: translateY(0) scale(0.98);
+            }
+
+            /* Main Content */
+            .main {
+                padding: var(--spacing-2xl) 0;
+            }
+
+            .section {
+                display: none;
+                animation: fadeIn 0.5s ease-in-out;
+            }
+
+            .section.active {
+                display: block;
+            }
+
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .section-header {
+                text-align: center;
+                margin-bottom: var(--spacing-2xl);
+            }
+
+            .section-title {
+                font-size: 2.5rem;
+                font-weight: 700;
+                color: var(--gray-900);
+                margin-bottom: var(--spacing-sm);
+                letter-spacing: -0.025em;
+            }
+
+            .section-subtitle {
+                font-size: 1.125rem;
+                color: var(--gray-600);
+                max-width: 600px;
+                margin: 0 auto;
+            }
+
+            /* Cards */
+            .card {
+                background: var(--white);
+                border-radius: var(--radius-xl);
+                box-shadow: var(--shadow);
+                padding: var(--spacing-xl);
+                transition: all 0.3s ease;
+                border: 1px solid var(--gray-200);
+            }
+
+            .card:hover {
+                box-shadow: var(--shadow-xl);
+                transform: translateY(-8px) scale(1.02);
+            }
+
+            .card::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: linear-gradient(
+                    45deg,
+                    transparent 30%,
+                    rgba(255, 255, 255, 0.1) 50%,
+                    transparent 70%
+                );
+                transform: translateX(-100%);
+                transition: transform 0.6s;
+                pointer-events: none;
+            }
+
+            .card:hover::before {
+                transform: translateX(100%);
+            }
+
+            .card-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+                gap: var(--spacing-xl);
+                margin-bottom: var(--spacing-2xl);
+            }
+
+            .card-header {
+                display: flex;
+                align-items: center;
+                justify-content: between;
+                margin-bottom: var(--spacing-lg);
+                gap: var(--spacing);
+            }
+
+            .card-title {
+                font-size: 1.5rem;
+                font-weight: 600;
+                color: var(--gray-900);
+                display: flex;
+                align-items: center;
+                gap: var(--spacing-sm);
+            }
+
+            .card-title i {
+                color: var(--primary-color);
+            }
+
+            /* Forms */
+            .form-group {
+                margin-bottom: var(--spacing-md);
+            }
+
+            .form-label {
+                display: block;
+                font-weight: 500;
+                color: var(--gray-700);
+                margin-bottom: var(--spacing-xs);
+                font-size: 0.875rem;
+                letter-spacing: 0.025em;
+                text-transform: uppercase;
+            }
+
+            .form-input {
+                width: 100%;
+                padding: var(--spacing-sm) var(--spacing);
+                border: 1px solid var(--gray-300);
+                border-radius: var(--radius);
+                font-size: 1rem;
+                transition: all 0.2s ease;
+                background: var(--white);
+            }
+
+            .form-input:focus {
+                outline: none;
+                border-color: var(--primary-color);
+                box-shadow: 0 0 0 3px rgb(37 99 235 / 0.1);
+                transform: scale(1.02);
+            }
+
+            .form-input:focus + .form-label,
+            .form-input:not(:placeholder-shown) + .form-label {
+                transform: translateY(-24px) scale(0.8);
+                color: var(--primary-color);
+            }
+
+            .form-input:invalid {
+                border-color: var(--danger-color);
+            }
+
+            .form-row {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: var(--spacing);
+            }
+
+            .checkbox-group {
+                display: flex;
+                align-items: center;
+                gap: var(--spacing-sm);
+            }
+
+            .checkbox {
+                width: 1.25rem;
+                height: 1.25rem;
+                accent-color: var(--primary-color);
+            }
+
+            /* Buttons */
+            .btn {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: var(--spacing-xs);
+                padding: var(--spacing-sm) var(--spacing-md);
+                border: none;
+                border-radius: var(--radius);
+                font-weight: 500;
+                font-size: 0.875rem;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                text-decoration: none;
+                letter-spacing: 0.025em;
+                min-width: 120px;
+            }
+
+            .btn-primary {
+                background: var(--primary-color);
+                color: var(--white);
+            }
+
+            .btn-primary:hover {
+                background: var(--primary-dark);
+                transform: translateY(-2px) scale(1.05);
+                box-shadow: var(--shadow-lg);
+            }
+
+            .btn-primary:active {
+                transform: translateY(0) scale(0.98);
+            }
+
+            .btn-secondary {
+                background: var(--secondary-color);
+                color: var(--white);
+            }
+
+            .btn-secondary:hover {
+                background: var(--secondary-dark);
+                transform: translateY(-2px) scale(1.05);
+                box-shadow: var(--shadow-lg);
+            }
+
+            .btn-secondary:active {
+                transform: translateY(0) scale(0.98);
+            }
+
+            .btn-danger {
+                background: var(--danger-color);
+                color: var(--white);
+            }
+
+            .btn-danger:hover {
+                background: var(--danger-dark);
+                transform: translateY(-2px) scale(1.05);
+                box-shadow: var(--shadow-lg);
+                animation: pulse 0.5s ease-in-out;
+            }
+
+            .btn-danger:active {
+                transform: translateY(0) scale(0.98);
+            }
+
+            @keyframes pulse {
+                0% {
+                    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+                }
+                70% {
+                    box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+                }
+                100% {
+                    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+                }
+            }
+
+            .btn-outline {
+                background: transparent;
+                color: var(--primary-color);
+                border: 1px solid var(--primary-color);
+            }
+
+            .btn-outline:hover {
+                background: var(--primary-color);
+                color: var(--white);
+            }
+
+            .btn-group {
+                display: flex;
+                gap: var(--spacing-sm);
+                flex-wrap: wrap;
+                margin-top: var(--spacing-lg);
+            }
+
+            /* Data Display */
+            .data-card {
+                background: var(--gray-50);
+                border: 1px solid var(--gray-200);
+                border-radius: var(--radius-md);
+                padding: var(--spacing-lg);
+                margin-bottom: var(--spacing);
+            }
+
+            .data-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: var(--spacing);
+            }
+
+            .data-item {
+                display: flex;
+                flex-direction: column;
+                gap: var(--spacing-xs);
+            }
+
+            .data-label {
+                font-size: 0.75rem;
+                font-weight: 600;
+                color: var(--gray-500);
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+            }
+
+            .data-value {
+                font-size: 1rem;
+                color: var(--gray-900);
+                font-weight: 500;
+            }
+
+            /* Status & Alerts */
+            .alert {
+                padding: var(--spacing) var(--spacing-md);
+                border-radius: var(--radius);
+                margin-bottom: var(--spacing);
+                display: flex;
+                align-items: center;
+                gap: var(--spacing-sm);
+            }
+
+            .alert-success {
+                background: rgba(16, 185, 129, 0.1);
+                color: var(--secondary-dark);
+                border: 1px solid rgba(16, 185, 129, 0.2);
+            }
+
+            .alert-error {
+                background: rgba(239, 68, 68, 0.1);
+                color: var(--danger-dark);
+                border: 1px solid rgba(239, 68, 68, 0.2);
+            }
+
+            .alert-info {
+                background: rgba(59, 130, 246, 0.1);
+                color: var(--info-color);
+                border: 1px solid rgba(59, 130, 246, 0.2);
+            }
+
+            /* Loading States */
+            .loading {
+                display: inline-block;
+                width: 20px;
+                height: 20px;
+                border: 3px solid var(--gray-200);
+                border-radius: 50%;
+                border-top-color: var(--primary-color);
+                animation: spin 1s ease-in-out infinite;
+            }
+
+            @keyframes spin {
+                to {
+                    transform: rotate(360deg);
+                }
+            }
+
+            /* Responsive */
+            @media (max-width: 768px) {
+                .container {
+                    padding: 0 var(--spacing-sm);
+                }
+
+                .header-content {
+                    flex-direction: column;
+                    text-align: center;
+                }
+
+                .nav {
+                    flex-wrap: wrap;
+                    justify-content: center;
+                }
+
+                .section-title {
+                    font-size: 2rem;
+                }
+
+                .card-grid {
+                    grid-template-columns: 1fr;
+                }
+
+                .form-row {
+                    grid-template-columns: 1fr;
+                }
+
+                .btn-group {
+                    justify-content: center;
+                }
+            }
+
+            /* Utility Classes */
+            .hidden {
+                display: none !important;
+            }
+            .text-center {
+                text-align: center;
+            }
+            .text-right {
+                text-align: right;
+            }
+            .mb-0 {
+                margin-bottom: 0 !important;
+            }
+            .mt-lg {
+                margin-top: var(--spacing-lg);
+            }
+            .p-0 {
+                padding: 0 !important;
+            }
+
+            /* Theme Toggle */
+            .theme-toggle {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 1000;
+                background: rgba(255, 255, 255, 0.1);
+                border: none;
+                color: var(--white);
+                padding: 12px;
+                border-radius: 50%;
+                cursor: pointer;
+                transition: all var(--transition-normal);
+                backdrop-filter: blur(10px);
+            }
+
+            .theme-toggle:hover {
+                background: rgba(255, 255, 255, 0.2);
+                transform: rotate(180deg) scale(1.1);
+            }
+
+            /* Floating Action Button */
+            .fab {
+                position: fixed;
+                bottom: 30px;
+                right: 30px;
+                width: 56px;
+                height: 56px;
+                border-radius: 50%;
+                background: var(--primary-color);
+                color: white;
+                border: none;
+                font-size: 1.5rem;
+                cursor: pointer;
+                box-shadow: var(--shadow-lg);
+                transition: all var(--transition-normal);
+                z-index: 1000;
+            }
+
+            .fab:hover {
+                transform: scale(1.1) rotate(45deg);
+                box-shadow: var(--shadow-xl);
+            }
+
+            /* Status indicators */
+            .status-indicator {
+                display: inline-block;
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                margin-right: var(--spacing-xs);
+            }
+
+            .status-online {
+                background: var(--success-color);
+                animation: blink 2s infinite;
+            }
+            .status-offline {
+                background: var(--danger-color);
+            }
+
+            @keyframes blink {
+                0%,
+                50% {
+                    opacity: 1;
+                }
+                51%,
+                100% {
+                    opacity: 0.3;
+                }
+            }
+
+            /* Progress bar */
+            .progress-bar {
+                width: 100%;
+                height: 4px;
+                background: var(--gray-200);
+                border-radius: 2px;
+                overflow: hidden;
+                margin-bottom: var(--spacing);
+            }
+
+            .progress-fill {
+                height: 100%;
+                background: linear-gradient(
+                    90deg,
+                    var(--primary-color),
+                    var(--secondary-color)
+                );
+                border-radius: 2px;
+                transition: width var(--transition-slow);
+                animation: shimmer 2s infinite;
+            }
+
+            @keyframes shimmer {
+                0% {
+                    background-position: -200px 0;
+                }
+                100% {
+                    background-position: calc(200px + 100%) 0;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <header class="header">
+            <div class="container">
+                <div class="header-content">
+                    <div class="logo">
+                        <i class="fas fa-pills"></i>
+                        <span>Central Pharmacy</span>
+                    </div>
+                    <nav class="nav">
+                        <button class="nav-item active" data-section="pharmacy">
+                            <i class="fas fa-building"></i> Pharmacies
+                        </button>
+                        <button class="nav-item" data-section="patients">
+                            <i class="fas fa-users"></i> Patients
+                        </button>
+                        <div class="status-indicator status-online"></div>
+                        <span style="font-size: 0.875rem; opacity: 0.8"
+                            >System Online</span
+                        >
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Theme Toggle -->
+            <button class="theme-toggle" id="themeToggle" title="Toggle theme">
+                <i class="fas fa-moon"></i>
+            </button>
+        </header>
+
+        <main class="main">
+            <div class="container">
+                <!-- Pharmacy Management Section -->
+                <section id="pharmacy" class="section active">
+                    <div class="section-header">
+                        <h1 class="section-title">Pharmacy Management</h1>
+                        <p class="section-subtitle">
+                            Manage pharmacy locations and information
+                        </p>
+                    </div>
+
+                    <div class="card-grid">
+                        <!-- Get Pharmacy Card -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">
+                                    <i class="fas fa-search"></i>
+                                    Find Pharmacy
+                                </h3>
+                            </div>
+                            <form id="getPharmacyForm">
+                                <div class="form-group">
+                                    <label
+                                        class="form-label"
+                                        for="getPharmacyId"
+                                        >Pharmacy ID</label
+                                    >
+                                    <input
+                                        type="text"
+                                        id="getPharmacyId"
+                                        class="form-input"
+                                        placeholder="Enter pharmacy ID"
+                                        required
+                                    />
+                                </div>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-search"></i> Search
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Add/Update Pharmacy Card -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">
+                                    <i class="fas fa-plus-circle"></i>
+                                    Add/Update Pharmacy
+                                </h3>
+                            </div>
+                            <form id="pharmacyForm">
+                                <div class="form-group">
+                                    <label class="form-label" for="pharmacyId"
+                                        >Pharmacy ID</label
+                                    >
+                                    <input
+                                        type="text"
+                                        id="pharmacyId"
+                                        class="form-input"
+                                        placeholder="Enter pharmacy ID"
+                                        required
+                                    />
+                                </div>
+                                <div class="form-group">
+                                    <label
+                                        class="form-label"
+                                        for="pharmacyAddress"
+                                        >Address</label
+                                    >
+                                    <input
+                                        type="text"
+                                        id="pharmacyAddress"
+                                        class="form-input"
+                                        placeholder="Enter pharmacy address"
+                                        required
+                                    />
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label
+                                            class="form-label"
+                                            for="pharmacyPhone"
+                                            >Phone Number</label
+                                        >
+                                        <input
+                                            type="tel"
+                                            id="pharmacyPhone"
+                                            class="form-input"
+                                            placeholder="Enter phone number"
+                                            required
+                                        />
+                                    </div>
+                                    <div class="form-group">
+                                        <label
+                                            class="form-label"
+                                            for="pharmacyVersion"
+                                            >Version</label
+                                        >
+                                        <input
+                                            type="text"
+                                            id="pharmacyVersion"
+                                            class="form-input"
+                                            placeholder="1.0"
+                                            value="1.0"
+                                            required
+                                        />
+                                    </div>
+                                </div>
+                                <div class="btn-group">
+                                    <button
+                                        type="submit"
+                                        data-action="add"
+                                        class="btn btn-primary"
+                                    >
+                                        <i class="fas fa-plus"></i> Add Pharmacy
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        data-action="update"
+                                        class="btn btn-secondary"
+                                    >
+                                        <i class="fas fa-edit"></i> Update
+                                        Pharmacy
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Pharmacy Results -->
+                    <div id="pharmacyResults" class="hidden">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">
+                                    <i class="fas fa-info-circle"></i>
+                                    Pharmacy Details
+                                </h3>
+                                <button
+                                    id="deletePharmacyBtn"
+                                    class="btn btn-danger"
+                                >
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </div>
+                            <div id="pharmacyData"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Patients Management Section -->
+                <section id="patients" class="section">
+                    <div class="section-header">
+                        <h1 class="section-title">Patient Management</h1>
+                        <p class="section-subtitle">
+                            Manage patient records and information
+                        </p>
+                    </div>
+
+                    <div class="card-grid">
+                        <!-- Get Patient Card -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">
+                                    <i class="fas fa-search"></i>
+                                    Find Patient
+                                </h3>
+                            </div>
+                            <form id="getPatientForm">
+                                <div class="form-group">
+                                    <label class="form-label" for="getPatientId"
+                                        >Store Patient ID</label
+                                    >
+                                    <input
+                                        type="text"
+                                        id="getPatientId"
+                                        class="form-input"
+                                        placeholder="e.g., 101-a0ae1e15-bb87-4a36-90fe-a0a7e63aca4a"
+                                        required
+                                    />
+                                </div>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-search"></i> Search
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Add/Update Patient Card -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">
+                                    <i class="fas fa-user-plus"></i>
+                                    Add/Update Patient
+                                </h3>
+                            </div>
+                            <form id="patientForm">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label
+                                            class="form-label"
+                                            for="patientPharmacyId"
+                                            >Pharmacy ID</label
+                                        >
+                                        <input
+                                            type="text"
+                                            id="patientPharmacyId"
+                                            class="form-input"
+                                            placeholder="Enter pharmacy ID"
+                                            required
+                                        />
+                                    </div>
+                                    <div class="form-group">
+                                        <label
+                                            class="form-label"
+                                            for="patientId"
+                                            >Patient ID</label
+                                        >
+                                        <input
+                                            type="text"
+                                            id="patientId"
+                                            class="form-input"
+                                            placeholder="Enter patient ID"
+                                            required
+                                        />
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label
+                                            class="form-label"
+                                            for="firstName"
+                                            >First Name</label
+                                        >
+                                        <input
+                                            type="text"
+                                            id="firstName"
+                                            class="form-input"
+                                            placeholder="Enter first name"
+                                            required
+                                        />
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="lastName"
+                                            >Last Name</label
+                                        >
+                                        <input
+                                            type="text"
+                                            id="lastName"
+                                            class="form-input"
+                                            placeholder="Enter last name"
+                                            required
+                                        />
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="prefName"
+                                            >Preferred Name</label
+                                        >
+                                        <input
+                                            type="text"
+                                            id="prefName"
+                                            class="form-input"
+                                            placeholder="Enter preferred name"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label
+                                            class="form-label"
+                                            for="dateOfBirth"
+                                            >Date of Birth</label
+                                        >
+                                        <input
+                                            type="date"
+                                            id="dateOfBirth"
+                                            class="form-input"
+                                            required
+                                        />
+                                    </div>
+                                    <div class="form-group">
+                                        <label
+                                            class="form-label"
+                                            for="phoneNumber"
+                                            >Phone Number</label
+                                        >
+                                        <input
+                                            type="tel"
+                                            id="phoneNumber"
+                                            class="form-input"
+                                            placeholder="555-123-4567"
+                                            required
+                                        />
+                                    </div>
+                                    <div class="form-group">
+                                        <label
+                                            class="form-label"
+                                            for="provHealthNumber"
+                                            >Provincial Health Number</label
+                                        >
+                                        <input
+                                            type="text"
+                                            id="provHealthNumber"
+                                            class="form-input"
+                                            placeholder="PHN1234567"
+                                            required
+                                        />
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label
+                                            class="form-label"
+                                            for="unitNumber"
+                                            >Unit Number</label
+                                        >
+                                        <input
+                                            type="text"
+                                            id="unitNumber"
+                                            class="form-input"
+                                            placeholder="5B"
+                                        />
+                                    </div>
+                                    <div class="form-group">
+                                        <label
+                                            class="form-label"
+                                            for="streetNumber"
+                                            >Street Number</label
+                                        >
+                                        <input
+                                            type="text"
+                                            id="streetNumber"
+                                            class="form-input"
+                                            placeholder="123"
+                                            required
+                                        />
+                                    </div>
+                                    <div class="form-group">
+                                        <label
+                                            class="form-label"
+                                            for="streetName"
+                                            >Street Name</label
+                                        >
+                                        <input
+                                            type="text"
+                                            id="streetName"
+                                            class="form-input"
+                                            placeholder="Main Street"
+                                            required
+                                        />
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label" for="city"
+                                            >City</label
+                                        >
+                                        <input
+                                            type="text"
+                                            id="city"
+                                            class="form-input"
+                                            placeholder="Vancouver"
+                                            required
+                                        />
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="province"
+                                            >Province</label
+                                        >
+                                        <input
+                                            type="text"
+                                            id="province"
+                                            class="form-input"
+                                            placeholder="BC"
+                                            required
+                                        />
+                                    </div>
+                                    <div class="form-group">
+                                        <label
+                                            class="form-label"
+                                            for="postalCode"
+                                            >Postal Code</label
+                                        >
+                                        <input
+                                            type="text"
+                                            id="postalCode"
+                                            class="form-input"
+                                            placeholder="V5K0A1"
+                                            required
+                                        />
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label" for="country"
+                                            >Country</label
+                                        >
+                                        <input
+                                            type="text"
+                                            id="country"
+                                            class="form-input"
+                                            placeholder="Canada"
+                                            value="Canada"
+                                            required
+                                        />
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="langPref"
+                                            >Language Preference</label
+                                        >
+                                        <select
+                                            id="langPref"
+                                            class="form-input"
+                                            required
+                                        >
+                                            <option value="en">English</option>
+                                            <option value="fr">French</option>
+                                            <option value="es">Spanish</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="checkbox-group">
+                                        <input
+                                            type="checkbox"
+                                            id="smsOptInPref"
+                                            class="checkbox"
+                                        />
+                                        <label
+                                            class="form-label"
+                                            for="smsOptInPref"
+                                            >SMS Opt-in Preference</label
+                                        >
+                                    </div>
+                                </div>
+
+                                <div class="btn-group">
+                                    <button
+                                        type="submit"
+                                        data-action="add"
+                                        class="btn btn-primary"
+                                    >
+                                        <i class="fas fa-user-plus"></i> Add
+                                        Patient
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        data-action="update"
+                                        class="btn btn-secondary"
+                                    >
+                                        <i class="fas fa-user-edit"></i> Update
+                                        Patient
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Patient Results -->
+                    <div id="patientResults" class="hidden">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">
+                                    <i class="fas fa-user-circle"></i>
+                                    Patient Details
+                                </h3>
+                                <button
+                                    id="deletePatientBtn"
+                                    class="btn btn-danger"
+                                >
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </div>
+                            <div id="patientData"></div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Alerts Container -->
+        <div
+            id="alerts"
+            style="position: fixed; top: 60px; right: 20px; z-index: 1000"
+        ></div>
+
+        <!-- Progress Bar -->
+        <div
+            id="progressBar"
+            class="progress-bar hidden"
+            style="position: fixed; top: 0; left: 0; z-index: 9999"
+        >
+            <div class="progress-fill" style="width: 0%"></div>
+        </div>
+
+        <!-- Floating Action Button -->
+        <button class="fab hidden" id="scrollToTop" title="Scroll to top">
+            <i class="fas fa-arrow-up"></i>
+        </button>
+
+        <script src="static/app.js"></script>
+    </body>
+</html>
