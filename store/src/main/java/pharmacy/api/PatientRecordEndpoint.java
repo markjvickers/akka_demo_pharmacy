@@ -147,6 +147,13 @@ public class PatientRecordEndpoint {
         Optional<String> searchTerm
     ) {}
 
+    private String clean(Optional<String> st) {
+        return st
+            .filter(s -> !s.trim().isEmpty())
+            .map(String::trim)
+            .orElse(null);
+    }
+
     @Get("/search")
     public List<PatientRecord> searchPatients(PatientSearchCriteria criteria) {
         logger.info(
@@ -156,62 +163,42 @@ public class PatientRecordEndpoint {
             criteria.searchTerm().orElse("N/A")
         );
 
-        String firstName = criteria
-            .firstName()
-            .filter(s -> !s.trim().isEmpty())
-            .map(String::trim)
-            .orElse(null);
-        String lastName = criteria
-            .lastName()
-            .filter(s -> !s.trim().isEmpty())
-            .map(String::trim)
-            .orElse(null);
-        String searchTerm = criteria
-            .searchTerm()
-            .filter(s -> !s.trim().isEmpty())
-            .map(String::trim)
-            .orElse(null);
+        String firstName = clean(criteria.firstName());
+        String lastName = clean(criteria.lastName());
+        String searchTerm = clean(criteria.searchTerm());
 
         if (firstName != null && lastName != null) {
             // Search by both first and last name
             return componentClient
                 .forView()
-                .method((PatientSearchView view) ->
-                    view.searchByFirstAndLastName(
-                        new PatientSearchView.FirstAndLastNameSearchCriteria(
-                            firstName,
-                            lastName
-                        )
+                .method(PatientSearchView::searchByFirstAndLastName)
+                .invoke(
+                    new PatientSearchView.FirstAndLastNameSearchCriteria(
+                        firstName,
+                        lastName
                     )
                 )
-                .invoke()
                 .patientRecords();
         } else if (firstName != null) {
             // Search by first name only
             return componentClient
                 .forView()
-                .method((PatientSearchView view) ->
-                    view.searchByFirstName(firstName)
-                )
-                .invoke()
+                .method(PatientSearchView::searchByFirstName)
+                .invoke(firstName)
                 .patientRecords();
         } else if (lastName != null) {
             // Search by last name only
             return componentClient
                 .forView()
-                .method((PatientSearchView view) ->
-                    view.searchByLastName(lastName)
-                )
-                .invoke()
+                .method(PatientSearchView::searchByLastName)
+                .invoke(lastName)
                 .patientRecords();
         } else if (searchTerm != null) {
             // Search by general term (matches first or last name)
             return componentClient
                 .forView()
-                .method((PatientSearchView view) ->
-                    view.searchByName(searchTerm)
-                )
-                .invoke()
+                .method(PatientSearchView::searchByName)
+                .invoke(searchTerm)
                 .patientRecords();
         } else {
             // No search parameters provided
