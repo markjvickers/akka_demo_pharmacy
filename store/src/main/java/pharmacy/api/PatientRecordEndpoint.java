@@ -185,7 +185,7 @@ public class PatientRecordEndpoint {
                     )
                 )
                 .invoke()
-                .list();
+                .patientRecords();
         } else if (firstName != null) {
             // Search by first name only
             return componentClient
@@ -194,7 +194,7 @@ public class PatientRecordEndpoint {
                     view.searchByFirstName(firstName)
                 )
                 .invoke()
-                .list();
+                .patientRecords();
         } else if (lastName != null) {
             // Search by last name only
             return componentClient
@@ -203,7 +203,7 @@ public class PatientRecordEndpoint {
                     view.searchByLastName(lastName)
                 )
                 .invoke()
-                .list();
+                .patientRecords();
         } else if (searchTerm != null) {
             // Search by general term (matches first or last name)
             return componentClient
@@ -212,7 +212,7 @@ public class PatientRecordEndpoint {
                     view.searchByName(searchTerm)
                 )
                 .invoke()
-                .list();
+                .patientRecords();
         } else {
             // No search parameters provided
             throw HttpException.badRequest(
