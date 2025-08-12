@@ -15,18 +15,14 @@ jobs:
         run: |
           echo "Get Central Route"
           central_route_json=$(akka service get central -o json)
-          echo "$central_route_json"
           
-          # Store for later use (escape newlines for GitHub Actions)
-          echo "json_output<<EOF" >> $GITHUB_OUTPUT
-          echo "$central_route_json" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          # Extract the host from the first routes entry
+          route_host=$(echo "$central_route_json" | jq -r '.routes[0].spec.host // "not-found"')
           
-          # Or if you want to extract specific fields with jq:
-          # route_url=$(echo "$central_route_json" | jq -r '.url // "not-found"')
-          # echo "route_url=$route_url" >> $GITHUB_OUTPUT
+          echo "Route host: $route_host"
+          echo "host=$route_host" >> $GITHUB_OUTPUT
       
-      - name: Use Central Route Data
+      - name: Use Central Route Host
         run: |
-          echo "Retrieved JSON:"
-          echo '${{ steps.central_route.outputs.json_output }}'
+          echo "Central service host: ${{ steps.central_route.outputs.host }}"
+          echo "Full URL: https://${{ steps.central_route.outputs.host }}"
