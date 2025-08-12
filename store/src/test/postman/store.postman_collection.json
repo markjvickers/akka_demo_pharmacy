@@ -12,10 +12,8 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "http://127.0.0.1:9000/patients/95f7a77e-8594-44f4-b692-b71594350ba4",
-          "protocol": "http",
-          "host": ["127", "0", "0", "1"],
-          "port": "9000",
+          "raw": "{{baseUrl}}/patients/95f7a77e-8594-44f4-b692-b71594350ba4",
+          "host": ["{{baseUrl}}"],
           "path": ["patients", "95f7a77e-8594-44f4-b692-b71594350ba4"]
         }
       },
@@ -36,10 +34,8 @@
           }
         },
         "url": {
-          "raw": "http://127.0.0.1:9000/patients/patient",
-          "protocol": "http",
-          "host": ["127", "0", "0", "1"],
-          "port": "9000",
+          "raw": "{{baseUrl}}/patients/patient",
+          "host": ["{{baseUrl}}"],
           "path": ["patients", "patient"]
         }
       },
@@ -51,10 +47,8 @@
         "method": "DELETE",
         "header": [],
         "url": {
-          "raw": "http://127.0.0.1:9000/patients/patient/60289088-a40c-4973-ab91-af64bbc83667",
-          "protocol": "http",
-          "host": ["127", "0", "0", "1"],
-          "port": "9000",
+          "raw": "{{baseUrl}}/patients/patient/60289088-a40c-4973-ab91-af64bbc83667",
+          "host": ["{{baseUrl}}"],
           "path": [
             "patients",
             "patient",
@@ -79,10 +73,8 @@
           }
         },
         "url": {
-          "raw": "http://127.0.0.1:9000/patients/patient/dff11491-0409-47dc-b504-918c86249ee2",
-          "protocol": "http",
-          "host": ["127", "0", "0", "1"],
-          "port": "9000",
+          "raw": "{{baseUrl}}/patients/patient/dff11491-0409-47dc-b504-918c86249ee2",
+          "host": ["{{baseUrl}}"],
           "path": [
             "patients",
             "patient",
@@ -107,10 +99,8 @@
           }
         },
         "url": {
-          "raw": "http://127.0.0.1:9000/patients/patient/merge",
-          "protocol": "http",
-          "host": ["127", "0", "0", "1"],
-          "port": "9000",
+          "raw": "{{baseUrl}}/patients/patient/merge",
+          "host": ["{{baseUrl}}"],
           "path": ["patients", "patient", "merge"]
         }
       },
@@ -134,10 +124,8 @@
           }
         },
         "url": {
-          "raw": "http://127.0.0.1:9000/patients/search",
-          "protocol": "http",
-          "host": ["127", "0", "0", "1"],
-          "port": "9000",
+          "raw": "{{baseUrl}}/patients/search",
+          "host": ["{{baseUrl}}"],
           "path": ["patients", "search"],
           "query": [
             {
@@ -175,10 +163,8 @@
           }
         },
         "url": {
-          "raw": "http://127.0.0.1:9000/patients/search",
-          "protocol": "http",
-          "host": ["127", "0", "0", "1"],
-          "port": "9000",
+          "raw": "{{baseUrl}}/patients/search",
+          "host": ["{{baseUrl}}"],
           "path": ["patients", "search"],
           "query": [
             {
@@ -204,14 +190,19 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "http://127.0.0.1:9000/patients/delivery/summary",
-          "protocol": "http",
-          "host": ["127", "0", "0", "1"],
-          "port": "9000",
+          "raw": "{{baseUrl}}/patients/delivery/summary",
+          "host": ["{{baseUrl}}"],
           "path": ["patients", "delivery", "summary"]
         }
       },
       "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://127.0.0.1:9000",
+      "type": "string"
     }
   ]
 }
