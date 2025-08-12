@@ -352,18 +352,36 @@ class UIManager {
   // Form data helpers
   getPharmacyFormData() {
     const pharmacyId = document.getElementById("pharmacyId").value.trim();
-    const address = document.getElementById("pharmacyAddress").value.trim();
+    const streetAddress = document
+      .getElementById("pharmacyStreetAddress")
+      .value.trim();
+    const city = document.getElementById("pharmacyCity").value.trim();
+    const province = document.getElementById("pharmacyProvince").value.trim();
+    const postalCode = document
+      .getElementById("pharmacyPostalCode")
+      .value.trim();
     const phoneNumber = document.getElementById("pharmacyPhone").value.trim();
     const version = document.getElementById("pharmacyVersion").value.trim();
 
-    if (!pharmacyId || !address || !phoneNumber || !version) {
+    if (
+      !pharmacyId ||
+      !streetAddress ||
+      !city ||
+      !province ||
+      !postalCode ||
+      !phoneNumber ||
+      !version
+    ) {
       this.showAlert("Please fill in all required fields", "error");
       return null;
     }
 
     return {
       pharmacyId,
-      address,
+      streetAddress,
+      city,
+      province,
+      postalCode,
       phoneNumber,
       version,
     };
@@ -432,8 +450,20 @@ class UIManager {
                     <span class="data-value">${pharmacy.pharmacyId}</span>
                 </div>
                 <div class="data-item">
-                    <span class="data-label">Address</span>
-                    <span class="data-value">${pharmacy.address}</span>
+                    <span class="data-label">Street Address</span>
+                    <span class="data-value">${pharmacy.streetAddress}</span>
+                </div>
+                <div class="data-item">
+                    <span class="data-label">City</span>
+                    <span class="data-value">${pharmacy.city}</span>
+                </div>
+                <div class="data-item">
+                    <span class="data-label">Province</span>
+                    <span class="data-value">${pharmacy.province}</span>
+                </div>
+                <div class="data-item">
+                    <span class="data-label">Postal Code</span>
+                    <span class="data-value">${pharmacy.postalCode}</span>
                 </div>
                 <div class="data-item">
                     <span class="data-label">Phone Number</span>
@@ -448,7 +478,11 @@ class UIManager {
 
     // Populate form for editing
     document.getElementById("pharmacyId").value = pharmacy.pharmacyId;
-    document.getElementById("pharmacyAddress").value = pharmacy.address;
+    document.getElementById("pharmacyStreetAddress").value =
+      pharmacy.streetAddress;
+    document.getElementById("pharmacyCity").value = pharmacy.city;
+    document.getElementById("pharmacyProvince").value = pharmacy.province;
+    document.getElementById("pharmacyPostalCode").value = pharmacy.postalCode;
     document.getElementById("pharmacyPhone").value = pharmacy.phoneNumber;
     document.getElementById("pharmacyVersion").value = pharmacy.version;
 

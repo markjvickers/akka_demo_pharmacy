@@ -96,7 +96,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"pharmacyId\": \"101\",\n  \"address\": \"123 Rue Sainte-Catherine Ouest, Montréal, QC H3B 1A7\",\n  \"phoneNumber\": \"514-555-1234\",\n  \"version\": \"1.0\"\n}",
+          "raw": "{\n  \"pharmacyId\": \"101\",\n  \"streetAddress\": \"123 Rue Sainte-Catherine Ouest\",\n  \"city\": \"Montréal\",\n  \"province\": \"QC\",\n  \"postalCode\": \"H3B 1A7\",\n  \"phoneNumber\": \"514-555-1234\",\n  \"version\": \"1.0\"\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -118,7 +118,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"pharmacyId\": \"101\",\n  \"address\": \"123 Rue Sainte-Catherine Ouest, Montréal, QC H3B 1A7\",\n  \"phoneNumber\": \"514-867-5309\",\n  \"version\": \"1.0\"\n}",
+          "raw": "{\n  \"pharmacyId\": \"101\",\n  \"streetAddress\": \"123 Rue Sainte-Catherine Ouest\",\n  \"city\": \"Montréal\",\n  \"province\": \"QC\",\n  \"postalCode\": \"H3B 1A7\",\n  \"phoneNumber\": \"514-867-5309\",\n  \"version\": \"1.0\"\n}",
           "options": {
             "raw": {
               "language": "json"
