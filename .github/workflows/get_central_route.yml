@@ -1,0 +1,22 @@
+name: get_central_route
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Akka CLI
+        uses: akka/setup-akka-cli-action@v1
+        with:
+          token: ${{ secrets.AKKA_TOKEN }}
+          project-id: ${{ secrets.AKKA_PROJECT_ID }}
+
+      - run: echo "Get Central Route"
+
+      - name: get route details
+        run: akka service get central -o json >> $CENTRAL_ROUTE_JSON
+
+      - name: extract route
+        run: route=$(echo "$CENTRAL_ROUTE_JSON" | jq -r '.service.routes[0].spec.host')
