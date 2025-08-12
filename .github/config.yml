@@ -1,0 +1,17 @@
+name: pharmacy
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Akka CLI
+        uses: akka/setup-akka-cli-action@v1
+        with:
+          token: ${{ secrets.AKKA_TOKEN }}
+          project-id: ${{ secrets.AKKA_PROJECT_ID }}
+      - name: List services
+        run: akka service list
