@@ -39,11 +39,13 @@ jobs:
       - name: check docker
         run: docker images
 
-      - name: get image tag from docker
-        run:|
+      - name: Get non-latest pharmacy-central tag
+        run: |
           REPO_NAME="pharmacy-central"
-          NON_LATEST_TAG=$(docker images --format '{{.Repository}} {{.Tag}}' | awk -v repo="$REPO_NAME" '$1 == repo && $2 != "latest" {print $2}')
-          echo "Non-latest tag: $NON_LATEST_TAG"
+          NON_LATEST_TAG=$(docker images --format '{{.Repository}} {{.Tag}}' \
+              | awk -v repo="$REPO_NAME" '$1 == repo && $2 != "latest" {print $2}')
+          echo "Tag found: $NON_LATEST_TAG"
+          echo "NON_LATEST_TAG=$NON_LATEST_TAG" >> $GITHUB_ENV
 
 
       - name: akka service deployment
