@@ -44,7 +44,3 @@ jobs:
           echo "Tag found: $NON_LATEST_TAG"
           echo "NON_LATEST_TAG=$NON_LATEST_TAG" >> $GITHUB_ENV
 	
-
-      - name: akka service deployment
-        #run: akka service deploy store pharmacy-store:$NON_LATEST_TAG --push 
-	
