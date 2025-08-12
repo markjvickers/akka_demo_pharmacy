@@ -22,5 +22,5 @@ jobs:
       - name: List projects
         run: akka projects list
 
-     - name: Checkout code
+      - name: Checkout code
         uses: actions/checkout@v4
