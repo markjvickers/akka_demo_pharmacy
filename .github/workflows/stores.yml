@@ -29,6 +29,18 @@ jobs:
           distribution: temurin
           java-version: 21
 
+      - name: Get Central Route
+        id: central_route
+        run: |
+          echo "Get Central Route"
+          central_route_json=$(akka service get central -o json)
+
+          # Extract the host from the first routes entry
+          route_host=$(echo "$central_route_json" | jq -r '.routes[0].spec.host // "not-found"')
+
+          echo "Route host: $route_host"
+          echo "host=$route_host" >> $GITHUB_OUTPUT
+
       - name: Build & Push to local Docker
         run: mvn clean install -DskipTests
         working-directory: store
@@ -43,3 +55,8 @@ jobs:
               | awk -v repo="$REPO_NAME" '$1 == repo && $2 != "latest" {print $2}')
           echo "Tag found: $NON_LATEST_TAG"
           echo "NON_LATEST_TAG=$NON_LATEST_TAG" >> $GITHUB_ENV
+
+      - name: Use Central Route Host
+        run: |
+          echo "Central service host: ${{ steps.central_route.outputs.host }}"
+          echo "Full URL: https://${{ steps.central_route.outputs.host }}"
