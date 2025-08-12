@@ -1,11 +1,12 @@
-name: store
+name: central
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
     paths:
       - 'store/**'
-	
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -15,8 +16,8 @@ jobs:
         with:
           token: ${{ secrets.AKKA_TOKEN }}
           project-id: ${{ secrets.AKKA_PROJECT_ID }}
+
       - run: echo "Build & deploy stores"
+
       - name: List projects
         run: akka projects list
-
-	

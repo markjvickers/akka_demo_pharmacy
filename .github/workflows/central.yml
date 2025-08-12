@@ -2,10 +2,11 @@ name: central
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
     paths:
       - 'central/**'
-	
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -15,8 +16,8 @@ jobs:
         with:
           token: ${{ secrets.AKKA_TOKEN }}
           project-id: ${{ secrets.AKKA_PROJECT_ID }}
+
       - run: echo "Build & deploy central"
+
       - name: List projects
         run: akka projects list
-
-	
