@@ -1,0 +1,22 @@
+{
+  "stores": [
+    {
+      "pharmacyId": "101",
+      "streetAddress": "123 Main Street West",
+      "city": "Hamilton",
+      "province": "ON",
+      "postalCode": "L8P 2Z7",
+      "phoneNumber": "905-555-0123",
+      "version": "1"
+    },
+    {
+      "pharmacyId": "102",
+      "streetAddress": "456 Rue de la Gauchetière",
+      "city": "Montreal",
+      "province": "QC",
+      "postalCode": "H2Z 1X5",
+      "phoneNumber": "514-555-0199",
+      "version": "1"
+    }
+  ]
+}
