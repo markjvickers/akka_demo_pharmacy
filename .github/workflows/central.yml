@@ -32,7 +32,7 @@ jobs:
           distribution: temurin
           java-version: 21
 
-      - name: Build & Push to GHCR
+      - name: Build & Push to local Docker
         run: mvn clean install -DskipTests
         working-directory: central
 
@@ -40,4 +40,4 @@ jobs:
         run: docker images
 
       - name: akka service deployment
-        run: akka service deploy central central:latest --push 
+        run: akka service deploy central pharmacy-central:latest --push 
