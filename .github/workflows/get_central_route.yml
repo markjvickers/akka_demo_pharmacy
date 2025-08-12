@@ -13,10 +13,7 @@ jobs:
           token: ${{ secrets.AKKA_TOKEN }}
           project-id: ${{ secrets.AKKA_PROJECT_ID }}
 
-      - run: echo "Get Central Route"
-
-      - name: get route details
-        run: central_route_json = akka service get central -o json
-
-      - name: extract route
-        run: echo $central_route_json
+      - run: |
+        echo "Get Central Route"
+        central_route_json = akka service get central -o json
+        echo $central_route_json
