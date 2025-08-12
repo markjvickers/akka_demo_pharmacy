@@ -3,7 +3,7 @@ name: central
 on:
   push:
     branches: [ main ]
-    paths: [
+    paths: 
 	- 'central/**'
 	
 jobs:
