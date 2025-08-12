@@ -3,8 +3,8 @@ name: store
 on:
   push:
     branches: [ main ]
-    paths: 
-	- 'store/**'
+    paths:
+      - 'store/**'
 	
 jobs:
   deploy:
