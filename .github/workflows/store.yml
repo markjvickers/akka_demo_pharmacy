@@ -1,6 +1,7 @@
-name: store
+name: stores
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -19,5 +20,31 @@ jobs:
 
       - run: echo "Build & deploy stores"
 
-      - name: List projects
-        run: akka projects list
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Build & Push to local Docker
+        run: mvn clean install -DskipTests
+        working-directory: store
+
+      - name: check docker
+        run: docker images
+
+      - name: Get non-latest pharmacy-store tag
+        run: |
+          REPO_NAME="pharmacy-store"
+          NON_LATEST_TAG=$(docker images --format '{{.Repository}} {{.Tag}}' \
+              | awk -v repo="$REPO_NAME" '$1 == repo && $2 != "latest" {print $2}')
+          echo "Tag found: $NON_LATEST_TAG"
+          echo "NON_LATEST_TAG=$NON_LATEST_TAG" >> $GITHUB_ENV
+	
+
+      - name: akka service deployment
+        #run: akka service deploy store pharmacy-store:$NON_LATEST_TAG --push 
+	
