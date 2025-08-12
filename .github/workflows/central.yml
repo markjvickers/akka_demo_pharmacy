@@ -41,3 +41,5 @@ jobs:
 
       - name: akka service deployment
         run: akka service deploy central pharmacy-central:latest --push 
+      - name: akka service expose
+        run: akka service expose central
