@@ -1,4 +1,4 @@
-name: central
+name: store
 
 on:
   push:
