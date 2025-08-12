@@ -6,7 +6,7 @@ on:
     branches:
       - main
     paths:
-      - 'store/**'
+      - "store/**"
 
 jobs:
   deploy:
@@ -43,4 +43,3 @@ jobs:
               | awk -v repo="$REPO_NAME" '$1 == repo && $2 != "latest" {print $2}')
           echo "Tag found: $NON_LATEST_TAG"
           echo "NON_LATEST_TAG=$NON_LATEST_TAG" >> $GITHUB_ENV
-	
