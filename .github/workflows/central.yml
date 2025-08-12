@@ -24,9 +24,3 @@ jobs:
 
      - name: Checkout code
         uses: actions/checkout@v4
-
-     - name: Build & Push to ACR
-        run: |
-          mvn clean install -DskipTests \
-            -Djib.to.image=kcr.us-east-1.kalix.io/vickers/demo-pharmacy/central:latest
-
