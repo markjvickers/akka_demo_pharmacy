@@ -16,7 +16,7 @@ jobs:
       - run: echo "Get Central Route"
 
       - name: get route details
-        run: akka service get central -o json >> $CENTRAL_ROUTE_JSON
+        run: central_route_json = akka service get central -o json
 
       - name: extract route
-        run: route=$(echo "$CENTRAL_ROUTE_JSON" | jq -r '.service.routes[0].spec.host')
+        run: echo $central_route_json
