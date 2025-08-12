@@ -60,3 +60,18 @@ jobs:
         run: |
           echo "Central service host: ${{ steps.central_route.outputs.host }}"
           echo "Full URL: https://${{ steps.central_route.outputs.host }}"
+
+      - name: Process stores from file
+        run: |
+          # Read the JSON file
+          stores_json=$(cat config/stores.json)
+
+          # Process each store
+          while IFS= read -r store; do
+            pharmacy_id=$(echo "$store" | jq -r '.pharmacyId')
+
+            echo "🏪 Processing Store $pharmacy_id"
+
+            akka service deploy store-$pharmacy_id pharmacy-store:${{ steps.central_route.outputs.host }} --push
+
+          done < <(echo "$stores_json" | jq -c '.list[]')
