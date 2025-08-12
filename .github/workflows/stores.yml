@@ -74,4 +74,4 @@ jobs:
 
             akka service deploy store-$pharmacy_id pharmacy-store:${{ steps.central_route.outputs.host }} --push
 
-          done < <(echo "$stores_json" | jq -c '.list[]')
+          done < <(echo "$stores_json" | jq -c '.stores[]')
