@@ -13,5 +13,5 @@ jobs:
         with:
           token: ${{ secrets.AKKA_TOKEN }}
           project-id: ${{ secrets.AKKA_PROJECT_ID }}
-      - name: List services
-        run: akka service list
+      - name: List projects
+        run: akka projects list
