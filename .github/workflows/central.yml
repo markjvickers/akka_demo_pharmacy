@@ -24,3 +24,8 @@ jobs:
 
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Build & Push to GHCR
+        run: |
+          mvn clean install -DskipTests \
+            -Djib.to.image=ghcr.io/${{ github.repository_owner }}/my-service:${{ github.sha }}
