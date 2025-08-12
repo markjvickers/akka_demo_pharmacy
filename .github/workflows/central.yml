@@ -39,7 +39,14 @@ jobs:
       - name: check docker
         run: docker images
 
+      - name: get image tag from docker
+        run:|
+          REPO_NAME="pharmacy-central"
+          NON_LATEST_TAG=$(docker images --format '{{.Repository}} {{.Tag}}' | awk -v repo="$REPO_NAME" '$1 == repo && $2 != "latest" {print $2}')
+          echo "Non-latest tag: $NON_LATEST_TAG"
+
+
       - name: akka service deployment
-        run: akka service deploy central pharmacy-central:latest --push 
+        run: akka service deploy central pharmacy-central:$NON_LATEST_TAG --push 
       - name: check if akka service is exposed
         run: akka service get central
