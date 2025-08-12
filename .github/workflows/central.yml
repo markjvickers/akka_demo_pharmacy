@@ -35,5 +35,8 @@ jobs:
       - name: Build & Push to GHCR
         run: |
           mvn clean install -DskipTests \
-            -Djib.to.image=ghcr.io/${{ github.repository_owner }}/my-service:${{ github.sha }}
+            -Djib.to.image=kcr.us-east-1.akka.io/vickers/demo-pharmacy/central:latest
         working-directory: central
+
+      - name: check docker
+        run: docker images
