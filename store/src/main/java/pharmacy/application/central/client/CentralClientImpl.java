@@ -30,27 +30,10 @@ public class CentralClientImpl implements CentralClient {
     @Override
     public StrictResponse<ByteString> create(StorePatientRecord record) {
         logger.info("Creating patient record: {}", record);
-        try {
-            var result = httpClient
-                .PUT("/patients/patient")
-                .withRequestBody(record)
-                .invoke();
-            logger.info("Result of creation: {}", result);
-            result
-                .httpResponse()
-                .getHeaders()
-                .forEach(header -> {
-                    var key = header.name();
-                    var value = header.value();
-                    logger.info("header key: {}, value: {}", key, value);
-                });
-            return result;
-        } catch (Exception e) {
-            logger.error("Error creating patient record {}", e);
-            logger.error("Error cause: {}", e.getCause());
-            logger.error("Error message: {}", e.getMessage());
-            throw e;
-        }
+        return httpClient
+            .PUT("/patients/patient")
+            .withRequestBody(record)
+            .invoke();
     }
 
     @Override

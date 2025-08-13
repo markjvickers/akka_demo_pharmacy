@@ -33,7 +33,7 @@ jobs:
         id: central_route
         run: |
           echo "Get Central Route"
-          central_route_json=$(akka service get central1 -o json)
+          central_route_json=$(akka service get central -o json)
 
           # Extract the host from the first routes entry
           route_host=$(echo "$central_route_json" | jq -r '.routes[0].spec.host // "not-found"')
@@ -72,6 +72,6 @@ jobs:
 
             echo "🏪 Processing Store $pharmacy_id"
             # TODO: must configure store id as env var for deployed store (and then make use of it in UI)
-            akka service deploy store-$pharmacy_id pharmacy-store:$NON_LATEST_TAG --push --env SERVICE_URL=central1,PHARMACY_ID=$pharmacy_id
+            akka service deploy store-$pharmacy_id pharmacy-store:$NON_LATEST_TAG --push --env SERVICE_URL=central,PHARMACY_ID=$pharmacy_id
 
           done < <(echo "$stores_json" | jq -c '.stores[]')
