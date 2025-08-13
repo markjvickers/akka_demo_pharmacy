@@ -554,14 +554,25 @@ function PatientDetails({ patient, onClose, onEdit }) {
           </div>
         </div>
 
-        <div className="form-group">
-          <label className="form-label">Provincial Health Number</label>
-          <p
-            className="form-input"
-            style={{ backgroundColor: "#f8fafc", border: "none" }}
-          >
-            {patient.provHealthNumber}
-          </p>
+        <div className="form-row">
+          <div className="form-group">
+            <label className="form-label">Patient ID</label>
+            <p
+              className="form-input"
+              style={{ backgroundColor: "#f8fafc", border: "none" }}
+            >
+              {patient.patientId}
+            </p>
+          </div>
+          <div className="form-group">
+            <label className="form-label">Provincial Health Number</label>
+            <p
+              className="form-input"
+              style={{ backgroundColor: "#f8fafc", border: "none" }}
+            >
+              {patient.provHealthNumber}
+            </p>
+          </div>
         </div>
 
         <div className="form-group">
