@@ -6,7 +6,7 @@ on:
     branches:
       - main
     paths:
-      - 'central/**'
+      - "central/**"
 
 jobs:
   deploy:
@@ -47,8 +47,7 @@ jobs:
           echo "Tag found: $NON_LATEST_TAG"
           echo "NON_LATEST_TAG=$NON_LATEST_TAG" >> $GITHUB_ENV
 
-
       - name: akka service deployment
-        run: akka service deploy central pharmacy-central:$NON_LATEST_TAG --push 
+        run: akka service deploy pharmacy-central pharmacy-central:$NON_LATEST_TAG --push
       - name: check if akka service is exposed
         run: akka service get central
