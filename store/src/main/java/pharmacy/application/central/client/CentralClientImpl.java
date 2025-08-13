@@ -29,10 +29,13 @@ public class CentralClientImpl implements CentralClient {
 
     @Override
     public StrictResponse<ByteString> create(StorePatientRecord record) {
-        return httpClient
+        logger.info("Creating patient record: {}", record);
+        var result = httpClient
             .PUT("/patients/patient")
             .withRequestBody(record)
             .invoke();
+        logger.info("Result of creation result: {}", result);
+        return result;
     }
 
     @Override
