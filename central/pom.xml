@@ -9,10 +9,10 @@
   </parent>
 
   <groupId>com.improving</groupId>
-  <artifactId>pharmacy-central</artifactId>
+  <artifactId>pharmacy-central1</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
-  <name>pharmacy-central</name>
+  <name>pharmacy-central1</name>
 
 </project>
