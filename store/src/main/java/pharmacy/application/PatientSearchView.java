@@ -30,7 +30,7 @@ public class PatientSearchView extends View {
     @Query(
         """
         SELECT * as patientRecords FROM patientRecords
-        WHERE text_search(firstName, :firstName)
+        WHERE firstName = :firstName
         """
     )
     public QueryEffect<PatientRecords> searchByFirstName(String firstName) {
@@ -41,7 +41,7 @@ public class PatientSearchView extends View {
     @Query(
         """
         SELECT * as patientRecords FROM patientRecords
-        WHERE text_search(lastName, :lastName)
+        WHERE lastName =  :lastName
         """
     )
     public QueryEffect<PatientRecords> searchByLastName(String lastName) {
