@@ -35,6 +35,15 @@ public class CentralClientImpl implements CentralClient {
             .withRequestBody(record)
             .invoke();
         logger.info("Result of creation result: {}", result);
+        result
+            .httpResponse()
+            .getHeaders()
+            .forEach(header -> {
+                var key = header.name();
+                var value = header.value();
+                logger.info("header key: {}", key);
+                logger.info("header value: {}", value);
+            });
         return result;
     }
 
