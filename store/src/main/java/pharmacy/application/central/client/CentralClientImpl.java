@@ -35,7 +35,7 @@ public class CentralClientImpl implements CentralClient {
                 .PUT("/patients/patient")
                 .withRequestBody(record)
                 .invoke();
-            logger.info("Result of creation result: {}", result);
+            logger.info("Result of creation: {}", result);
             result
                 .httpResponse()
                 .getHeaders()
@@ -46,9 +46,9 @@ public class CentralClientImpl implements CentralClient {
                 });
             return result;
         } catch (Exception e) {
-            logger.error("Error creating patient record", e);
-            logger.error("Error cause patient record", e.getCause());
-            logger.error("Error message", e.getMessage());
+            logger.error("Error creating patient record {}", e);
+            logger.error("Error cause: {}", e.getCause());
+            logger.error("Error message: {}", e.getMessage());
             throw e;
         }
     }
