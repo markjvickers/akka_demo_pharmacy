@@ -23,7 +23,7 @@ import pharmacy.application.central.delivery.PatientRecordDeliveryView;
 import pharmacy.domain.PatientRecord;
 import pharmacy.domain.PharmacyId;
 
-@Acl(allow = @Acl.Matcher(principal = Acl.Principal.ALL))
+@Acl(allow = @Acl.Matcher(principal = Acl.Principal.INTERNET))
 @HttpEndpoint("/patients")
 public class PatientRecordEndpoint {
 

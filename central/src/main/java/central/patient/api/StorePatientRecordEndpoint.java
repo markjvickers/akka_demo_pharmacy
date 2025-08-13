@@ -19,7 +19,7 @@ import central.patient.domain.StorePatientRecordId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Acl(allow = @Acl.Matcher(principal = Acl.Principal.ALL))
+@Acl(allow = @Acl.Matcher(service = "*"))
 //@JWT(validate = JWT.JwtMethodMode.BEARER_TOKEN)
 @HttpEndpoint("/patients")
 public class StorePatientRecordEndpoint extends AbstractHttpEndpoint {
