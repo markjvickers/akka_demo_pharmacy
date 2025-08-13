@@ -24,8 +24,7 @@ public class CentralClientImpl implements CentralClient {
     ) {
         var route = config.getString(CENTRAL_ROUTE);
         logger.info("Configuring central client with route: '{}'", route);
-        // httpClient = httpClientProvider.httpClientFor(route.trim());
-        httpClient = httpClientProvider.httpClientFor("central1");
+        httpClient = httpClientProvider.httpClientFor(route.trim());
     }
 
     @Override
