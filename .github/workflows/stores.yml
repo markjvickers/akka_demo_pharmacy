@@ -33,7 +33,7 @@ jobs:
         id: central_route
         run: |
           echo "Get Central Route"
-          central_route_json=$(akka service get pharmacy-central -o json)
+          central_route_json=$(akka service get central1 -o json)
 
           # Extract the host from the first routes entry
           route_host=$(echo "$central_route_json" | jq -r '.routes[0].spec.host // "not-found"')

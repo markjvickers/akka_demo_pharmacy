@@ -48,6 +48,6 @@ jobs:
           echo "NON_LATEST_TAG=$NON_LATEST_TAG" >> $GITHUB_ENV
 
       - name: akka service deployment
-        run: akka service deploy pharmacy-central pharmacy-central:$NON_LATEST_TAG --push
+        run: akka service deploy central1 pharmacy-central1:$NON_LATEST_TAG --push
       - name: check if akka service is exposed
-        run: akka service get central
+        run: akka service get central1
