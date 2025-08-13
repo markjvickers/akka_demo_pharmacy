@@ -72,6 +72,6 @@ jobs:
 
             echo "🏪 Processing Store $pharmacy_id"
             # TODO: must configure store id as env var for deployed store (and then make use of it in UI)
-            akka service deploy store-$pharmacy_id pharmacy-store:$NON_LATEST_TAG --push --env SERVICE_URL=http://${{ steps.central_route.outputs.host }}
+            akka service deploy store-$pharmacy_id pharmacy-store:$NON_LATEST_TAG --push --env SERVICE_URL=http://${{ steps.central_route.outputs.host }},PHARMACY_ID=pharmacy_id
 
           done < <(echo "$stores_json" | jq -c '.stores[]')
