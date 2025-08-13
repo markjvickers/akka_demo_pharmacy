@@ -143,8 +143,7 @@ public class PatientRecordEndpoint {
 
     public record PatientSearchCriteria(
         Optional<String> firstName,
-        Optional<String> lastName,
-        Optional<String> searchTerm
+        Optional<String> lastName
     ) {}
 
     private String clean(Optional<String> st) {
@@ -157,29 +156,15 @@ public class PatientRecordEndpoint {
     @Post("/search")
     public List<PatientRecord> searchPatients(PatientSearchCriteria criteria) {
         logger.info(
-            "Search request - firstName: {}, lastName: {}, searchTerm: {}",
+            "Search request - firstName: {}, lastName: {}",
             criteria.firstName().orElse("N/A"),
-            criteria.lastName().orElse("N/A"),
-            criteria.searchTerm().orElse("N/A")
+            criteria.lastName().orElse("N/A")
         );
 
         String firstName = clean(criteria.firstName());
         String lastName = clean(criteria.lastName());
-        String searchTerm = clean(criteria.searchTerm());
 
-        if (firstName != null && lastName != null) {
-            // Search by both first and last name
-            return componentClient
-                .forView()
-                .method(PatientSearchView::searchByFirstAndLastName)
-                .invoke(
-                    new PatientSearchView.FirstAndLastNameSearchCriteria(
-                        firstName,
-                        lastName
-                    )
-                )
-                .patientRecords();
-        } else if (firstName != null) {
+        if (firstName != null) {
             // Search by first name only
             return componentClient
                 .forView()
@@ -193,17 +178,10 @@ public class PatientRecordEndpoint {
                 .method(PatientSearchView::searchByLastName)
                 .invoke(lastName)
                 .patientRecords();
-        } else if (searchTerm != null) {
-            // Search by general term (matches first or last name)
-            return componentClient
-                .forView()
-                .method(PatientSearchView::searchByName)
-                .invoke(searchTerm)
-                .patientRecords();
         } else {
             // No search parameters provided
             throw HttpException.badRequest(
-                "At least one search parameter (firstName, lastName, or searchTerm) must be provided"
+                "At least one search parameter (firstName, lastName) must be provided"
             );
         }
     }

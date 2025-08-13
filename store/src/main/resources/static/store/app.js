@@ -59,14 +59,11 @@ const api = {
     if (searchParams.firstName)
       params.append("firstName", searchParams.firstName);
     if (searchParams.lastName) params.append("lastName", searchParams.lastName);
-    if (searchParams.searchTerm)
-      params.append("searchTerm", searchParams.searchTerm);
     return this.request(`/patients/search`, {
       method: "POST",
       body: JSON.stringify({
         firstName: searchParams.firstName,
         lastName: searchParams.lastName,
-        searchTerm: searchParams.searchTerm,
       }),
     });
   },
@@ -606,7 +603,6 @@ function PatientDetails({ patient, onClose, onEdit }) {
 function App() {
   const [patients, setPatients] = useState([]);
   const [filteredPatients, setFilteredPatients] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [loading, setLoading] = useState(false);
@@ -625,7 +621,7 @@ function App() {
   };
 
   const searchPatients = useCallback(async () => {
-    if (!searchTerm.trim() && !firstName.trim() && !lastName.trim()) {
+    if (!firstName.trim() && !lastName.trim()) {
       setFilteredPatients([]);
       return;
     }
@@ -635,7 +631,6 @@ function App() {
       const searchParams = {};
       if (firstName.trim()) searchParams.firstName = firstName.trim();
       if (lastName.trim()) searchParams.lastName = lastName.trim();
-      if (searchTerm.trim()) searchParams.searchTerm = searchTerm.trim();
 
       const results = await api.searchPatients(searchParams);
       setFilteredPatients(Array.isArray(results) ? results : []);
@@ -646,7 +641,7 @@ function App() {
     } finally {
       setLoading(false);
     }
-  }, [searchTerm, firstName, lastName]);
+  }, [firstName, lastName]);
 
   const loadDeliverySummary = useCallback(async () => {
     try {
@@ -723,7 +718,6 @@ function App() {
   };
 
   const clearSearch = () => {
-    setSearchTerm("");
     setFirstName("");
     setLastName("");
     setFilteredPatients([]);
@@ -787,15 +781,6 @@ function App() {
                   <input
                     type="text"
                     className="form-input"
-                    placeholder="Search by first or last name..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
-                </div>
-                <div className="search-input">
-                  <input
-                    type="text"
-                    className="form-input"
                     placeholder="First name..."
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
@@ -847,7 +832,7 @@ function App() {
                     />
                   ))}
                 </div>
-              ) : searchTerm || firstName || lastName ? (
+              ) : firstName || lastName ? (
                 <div className="empty-state">
                   <i className="fas fa-search"></i>
                   <h3>No patients found</h3>
