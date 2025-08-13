@@ -41,8 +41,7 @@ public class CentralClientImpl implements CentralClient {
             .forEach(header -> {
                 var key = header.name();
                 var value = header.value();
-                logger.info("header key: {}", key);
-                logger.info("header value: {}", value);
+                logger.info("header key: {}, value: {}", key, value);
             });
         return result;
     }
