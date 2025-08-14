@@ -1,6 +1,7 @@
 #!/bin/bash
 # Assumes that you have previously installed the AKKA CLI and gh CLI, and authorized each.
 echo "Starting the pharmacy demo..."
+akka config use-context demo-pharmacy
 
 # only do this if we need to deploy central
 # You need to wait until this step is finished before proceeding
@@ -31,7 +32,7 @@ is_service_ready() {
     # grep finds the line for the service
     # awk extracts the 4th column (STATUS)
     local status
-    status=$(akka service list --project demo-pharmacy | grep "^$service_name\b" | awk '{print $4}')
+    status=$(akka service list | grep "^$service_name\b" | awk '{print $4}')
 
     if [[ "$status" == "Ready" ]]; then
       echo "✅ Service '$service_name' is Ready."
@@ -49,7 +50,7 @@ is_service_ready() {
 if is_service_ready "central" 200; then
 
   echo "Proceeding with deployment..."
-  akka service expose central --project demo-pharmacy
+  akka service expose central
 
   # this deploys each of the stores
   # Again, you'll need to wait here
@@ -58,14 +59,14 @@ if is_service_ready "central" 200; then
   echo "Waiting for the stores are deployed..."
 
   if is_service_ready "store-101" 200; then
-    akka service expose store-101 --project demo-pharmacy
+    akka service expose store-101
   else
       echo "Failed to confirm service readiness. Aborting."
       exit 1
   fi
 
   if is_service_ready "store-102" 200; then
-    akka service expose store-102 --project demo-pharmacy
+    akka service expose store-102
   else
       echo "Failed to confirm service readiness. Aborting."
       exit 1
