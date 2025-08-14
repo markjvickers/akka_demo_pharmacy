@@ -105,11 +105,11 @@ public class PharmacySearchView extends View {
     @Query(
         """
         SELECT * as pharmacies FROM pharmacies
-        WHERE streetAddress LIKE '%' || :streetAddress || '%'
+        WHERE streetAddress = :streetAddress
         """
     )
     public QueryEffect<Pharmacies> searchByAddress(String streetAddress) {
-        logger.info("Searching pharmacies by address: {}", streetAddress);
+        logger.info("Searching pharmacies by address (exact): {}", streetAddress);
         return queryResult();
     }
 
@@ -172,13 +172,13 @@ public class PharmacySearchView extends View {
     @Query(
         """
         SELECT * as pharmacies FROM pharmacies
-        WHERE city LIKE '%' || :searchTerm || '%'
-        OR streetAddress LIKE '%' || :searchTerm || '%'
-        OR phoneNumber LIKE '%' || :searchTerm || '%'
+        WHERE city = :searchTerm
+        OR streetAddress = :searchTerm
+        OR phoneNumber = :searchTerm
         """
     )
     public QueryEffect<Pharmacies> searchByTerm(String searchTerm) {
-        logger.info("Searching pharmacies by term: {}", searchTerm);
+        logger.info("Searching pharmacies by term (exact across columns): {}", searchTerm);
         return queryResult();
     }
 

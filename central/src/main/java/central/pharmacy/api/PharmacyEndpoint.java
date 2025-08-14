@@ -86,21 +86,15 @@ public class PharmacyEndpoint extends AbstractHttpEndpoint {
     }
 
     // ------------------------------------------------------------
-    // SEARCH (query-parameter style)
-    // Clients call e.g.:
-    //   GET /pharmacies/search/city?city=St.%20John's
-    //   GET /pharmacies/search/province?province=ON
-    //   GET /pharmacies/search/location?city=Toronto&province=ON
-    //   GET /pharmacies/search/location?province=ON&postalCode=M5H1J9
-    //   GET /pharmacies/search/term?term=Main%20Street
+    // SEARCH (path-parameter style per Akka SDK validation rules)
     // ------------------------------------------------------------
 
-    @Get("/search/city")
+    @Get("/search/city/{city}")
     public List<Pharmacy> searchByCity(String city) {
         if (isBlank(city)) {
-            throw HttpException.error(StatusCodes.BAD_REQUEST, "Missing required query parameter: city");
+            throw HttpException.error(StatusCodes.BAD_REQUEST, "Missing required path parameter: city");
         }
-        logger.info("Searching pharmacies by city (query): {}", city);
+        logger.info("Searching pharmacies by city: {}", city);
         return componentClient
                 .forView()
                 .method(PharmacySearchView::searchByCity)
@@ -108,12 +102,12 @@ public class PharmacyEndpoint extends AbstractHttpEndpoint {
                 .pharmacies();
     }
 
-    @Get("/search/province")
+    @Get("/search/province/{province}")
     public List<Pharmacy> searchByProvince(String province) {
         if (isBlank(province)) {
-            throw HttpException.error(StatusCodes.BAD_REQUEST, "Missing required query parameter: province");
+            throw HttpException.error(StatusCodes.BAD_REQUEST, "Missing required path parameter: province");
         }
-        logger.info("Searching pharmacies by province (query): {}", province);
+        logger.info("Searching pharmacies by province: {}", province);
         return componentClient
                 .forView()
                 .method(PharmacySearchView::searchByProvince)
@@ -121,12 +115,12 @@ public class PharmacyEndpoint extends AbstractHttpEndpoint {
                 .pharmacies();
     }
 
-    @Get("/search/postal-code")
+    @Get("/search/postal-code/{postalCode}")
     public List<Pharmacy> searchByPostalCode(String postalCode) {
         if (isBlank(postalCode)) {
-            throw HttpException.error(StatusCodes.BAD_REQUEST, "Missing required query parameter: postalCode");
+            throw HttpException.error(StatusCodes.BAD_REQUEST, "Missing required path parameter: postalCode");
         }
-        logger.info("Searching pharmacies by postal code (query): {}", postalCode);
+        logger.info("Searching pharmacies by postal code: {}", postalCode);
         return componentClient
                 .forView()
                 .method(PharmacySearchView::searchByPostalCode)
@@ -134,12 +128,12 @@ public class PharmacyEndpoint extends AbstractHttpEndpoint {
                 .pharmacies();
     }
 
-    @Get("/search/phone")
+    @Get("/search/phone/{phoneNumber}")
     public List<Pharmacy> searchByPhoneNumber(String phoneNumber) {
         if (isBlank(phoneNumber)) {
-            throw HttpException.error(StatusCodes.BAD_REQUEST, "Missing required query parameter: phoneNumber");
+            throw HttpException.error(StatusCodes.BAD_REQUEST, "Missing required path parameter: phoneNumber");
         }
-        logger.info("Searching pharmacies by phone number (query): {}", phoneNumber);
+        logger.info("Searching pharmacies by phone number: {}", phoneNumber);
         return componentClient
                 .forView()
                 .method(PharmacySearchView::searchByPhoneNumber)
@@ -147,12 +141,12 @@ public class PharmacyEndpoint extends AbstractHttpEndpoint {
                 .pharmacies();
     }
 
-    @Get("/search/address")
+    @Get("/search/address/{streetAddress}")
     public List<Pharmacy> searchByAddress(String streetAddress) {
         if (isBlank(streetAddress)) {
-            throw HttpException.error(StatusCodes.BAD_REQUEST, "Missing required query parameter: streetAddress");
+            throw HttpException.error(StatusCodes.BAD_REQUEST, "Missing required path parameter: streetAddress");
         }
-        logger.info("Searching pharmacies by address (query, LIKE): {}", streetAddress);
+        logger.info("Searching pharmacies by address (LIKE): {}", streetAddress);
         return componentClient
                 .forView()
                 .method(PharmacySearchView::searchByAddress)
@@ -160,12 +154,12 @@ public class PharmacyEndpoint extends AbstractHttpEndpoint {
                 .pharmacies();
     }
 
-    @Get("/search/term")
+    @Get("/search/term/{term}")
     public List<Pharmacy> searchByTerm(String term) {
         if (isBlank(term)) {
-            throw HttpException.error(StatusCodes.BAD_REQUEST, "Missing required query parameter: term");
+            throw HttpException.error(StatusCodes.BAD_REQUEST, "Missing required path parameter: term");
         }
-        logger.info("Searching pharmacies by free-text term (query, LIKEs): {}", term);
+        logger.info("Searching pharmacies by free-text term (LIKEs): {}", term);
         return componentClient
                 .forView()
                 .method(PharmacySearchView::searchByTerm)
@@ -173,87 +167,43 @@ public class PharmacyEndpoint extends AbstractHttpEndpoint {
                 .pharmacies();
     }
 
-    /**
-     * Flexible location search using query params.
-     * Supports any of:
-     *   - city + province + postalCode  → searchByAllLocation
-     *   - city + province               → searchByCityAndProvince
-     *   - province + postalCode         → searchByProvinceAndPostalCode
-     *   - city + postalCode             → searchByCityAndPostalCode
-     *   - Only one of (city | province | postalCode) → routes to corresponding single-field search
-     */
-    @Get("/search/location")
-    public List<Pharmacy> searchByLocation(String city, String province, String postalCode) {
-        final boolean hasCity = notBlank(city);
-        final boolean hasProvince = notBlank(province);
-        final boolean hasPostal = notBlank(postalCode);
-
-        if (!hasCity && !hasProvince && !hasPostal) {
-            throw HttpException.error(
-                    StatusCodes.BAD_REQUEST,
-                    "Provide at least one of: city, province, postalCode"
-            );
+    // Explicit location combinations
+    @Get("/search/location/city-province/{city}/{province}")
+    public List<Pharmacy> searchByCityAndProvince(String city, String province) {
+        if (isBlank(city) || isBlank(province)) {
+            throw HttpException.error(StatusCodes.BAD_REQUEST, "Both city and province are required");
         }
-
-        // All three
-        if (hasCity && hasProvince && hasPostal) {
-            logger.info("Location search: city={}, province={}, postalCode={} (ALL)", city, province, postalCode);
-            return componentClient
-                    .forView()
-                    .method(PharmacySearchView::searchByAllLocation)
-                    .invoke(new PharmacySearchView.AllLocationCriteria(city, province, postalCode))
-                    .pharmacies();
-        }
-
-        // Two-field combos
-        if (hasCity && hasProvince) {
-            logger.info("Location search: city={}, province={} (CITY+PROVINCE)", city, province);
-            return componentClient
-                    .forView()
-                    .method(PharmacySearchView::searchByCityAndProvince)
-                    .invoke(new PharmacySearchView.CityAndProvinceCriteria(city, province))
-                    .pharmacies();
-        }
-        if (hasProvince && hasPostal) {
-            logger.info("Location search: province={}, postalCode={} (PROVINCE+POSTAL)", province, postalCode);
-            return componentClient
-                    .forView()
-                    .method(PharmacySearchView::searchByProvinceAndPostalCode)
-                    .invoke(new PharmacySearchView.ProvinceAndPostalCodeCriteria(province, postalCode))
-                    .pharmacies();
-        }
-        if (hasCity && hasPostal) {
-            logger.info("Location search: city={}, postalCode={} (CITY+POSTAL)", city, postalCode);
-            return componentClient
-                    .forView()
-                    .method(PharmacySearchView::searchByCityAndPostalCode)
-                    .invoke(new PharmacySearchView.CityAndPostalCodeCriteria(city, postalCode))
-                    .pharmacies();
-        }
-
-        // Single-field fallbacks
-        if (hasCity) {
-            logger.info("Location search: city={} (single)", city);
-            return componentClient
-                    .forView()
-                    .method(PharmacySearchView::searchByCity)
-                    .invoke(city)
-                    .pharmacies();
-        }
-        if (hasProvince) {
-            logger.info("Location search: province={} (single)", province);
-            return componentClient
-                    .forView()
-                    .method(PharmacySearchView::searchByProvince)
-                    .invoke(province)
-                    .pharmacies();
-        }
-        // hasPostal only
-        logger.info("Location search: postalCode={} (single)", postalCode);
+        logger.info("Location search (CITY+PROVINCE): city={}, province={}", city, province);
         return componentClient
                 .forView()
-                .method(PharmacySearchView::searchByPostalCode)
-                .invoke(postalCode)
+                .method(PharmacySearchView::searchByCityAndProvince)
+                .invoke(new PharmacySearchView.CityAndProvinceCriteria(city, province))
+                .pharmacies();
+    }
+
+    @Get("/search/location/province-postal/{province}/{postalCode}")
+    public List<Pharmacy> searchByProvinceAndPostalCode(String province, String postalCode) {
+        if (isBlank(province) || isBlank(postalCode)) {
+            throw HttpException.error(StatusCodes.BAD_REQUEST, "Both province and postalCode are required");
+        }
+        logger.info("Location search (PROVINCE+POSTAL): province={}, postalCode={}", province, postalCode);
+        return componentClient
+                .forView()
+                .method(PharmacySearchView::searchByProvinceAndPostalCode)
+                .invoke(new PharmacySearchView.ProvinceAndPostalCodeCriteria(province, postalCode))
+                .pharmacies();
+    }
+
+    @Get("/search/location/city-postal/{city}/{postalCode}")
+    public List<Pharmacy> searchByCityAndPostalCode(String city, String postalCode) {
+        if (isBlank(city) || isBlank(postalCode)) {
+            throw HttpException.error(StatusCodes.BAD_REQUEST, "Both city and postalCode are required");
+        }
+        logger.info("Location search (CITY+POSTAL): city={}, postalCode={}", city, postalCode);
+        return componentClient
+                .forView()
+                .method(PharmacySearchView::searchByCityAndPostalCode)
+                .invoke(new PharmacySearchView.CityAndPostalCodeCriteria(city, postalCode))
                 .pharmacies();
     }
 

@@ -106,7 +106,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"pharmacyId\": \"101\",\n  \"address\": \"123 Rue Sainte-Catherine Ouest, Montréal, QC H3B 1A7\",\n  \"phoneNumber\": \"514-867-5309\",\n  \"version\": \"1.0\"\n}",
+          "raw": "{\n  \"pharmacyId\": \"101\",\n  \"streetAddress\": \"123 Rue Sainte-Catherine Ouest\",\n  \"city\": \"Montréal\",\n  \"province\": \"QC\",\n  \"postalCode\": \"H3B 1A7\",\n  \"phoneNumber\": \"514-867-5309\",\n  \"version\": \"1.0\"\n}",
           "options": {"raw": {"language": "json"}}
         },
         "url": {
@@ -131,97 +131,79 @@
       "response": []
     },
     {
-      "name": "Search Pharmacies — By City (GET /search/city?city=...)",
+      "name": "Search Pharmacies — By City (GET /search/city/{city})",
       "request": {
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "{{baseUrl}}/pharmacies/search/city?city=Montréal",
+          "raw": "{{baseUrl}}/pharmacies/search/city/Montréal",
           "host": ["{{baseUrl}}"],
-          "path": ["pharmacies", "search", "city"],
-          "query": [
-            { "key": "city", "value": "Montréal" }
-          ]
+          "path": ["pharmacies", "search", "city", "Montréal"]
         }
       },
       "response": []
     },
     {
-      "name": "Search Pharmacies — By Province (GET /search/province?province=...)",
+      "name": "Search Pharmacies — By Province (GET /search/province/{province})",
       "request": {
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "{{baseUrl}}/pharmacies/search/province?province=QC",
+          "raw": "{{baseUrl}}/pharmacies/search/province/QC",
           "host": ["{{baseUrl}}"],
-          "path": ["pharmacies", "search", "province"],
-          "query": [
-            { "key": "province", "value": "QC" }
-          ]
+          "path": ["pharmacies", "search", "province", "QC"]
         }
       },
       "response": []
     },
     {
-      "name": "Search Pharmacies — By Postal Code (GET /search/postal-code?postalCode=...)",
+      "name": "Search Pharmacies — By Postal Code (GET /search/postal-code/{postalCode})",
       "request": {
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "{{baseUrl}}/pharmacies/search/postal-code?postalCode=H3B1A7",
+          "raw": "{{baseUrl}}/pharmacies/search/postal-code/H3B1A7",
           "host": ["{{baseUrl}}"],
-          "path": ["pharmacies", "search", "postal-code"],
-          "query": [
-            { "key": "postalCode", "value": "H3B1A7" }
-          ]
+          "path": ["pharmacies", "search", "postal-code", "H3B1A7"]
         }
       },
       "response": []
     },
     {
-      "name": "Search Pharmacies — By Phone (GET /search/phone?phoneNumber=...)",
+      "name": "Search Pharmacies — By Phone (GET /search/phone/{phoneNumber})",
       "request": {
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "{{baseUrl}}/pharmacies/search/phone?phoneNumber=514-555-1234",
+          "raw": "{{baseUrl}}/pharmacies/search/phone/514-555-1234",
           "host": ["{{baseUrl}}"],
-          "path": ["pharmacies", "search", "phone"],
-          "query": [
-            { "key": "phoneNumber", "value": "514-555-1234" }
-          ]
+          "path": ["pharmacies", "search", "phone", "514-555-1234"]
         }
       },
       "response": []
     },
     {
-      "name": "Search Pharmacies — By Address Contains (GET /search/address?streetAddress=...)",
+      "name": "Search Pharmacies — By Address Contains (GET /search/address/{streetAddress})",
       "request": {
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "{{baseUrl}}/pharmacies/search/address?streetAddress=Rue Sainte-Catherine",
+          "raw": "{{baseUrl}}/pharmacies/search/address/Rue%20Sainte-Catherine",
           "host": ["{{baseUrl}}"],
-          "path": ["pharmacies", "search", "address"],
-          "query": [
-            { "key": "streetAddress", "value": "Rue Sainte-Catherine" }
-          ]
+          "path": ["pharmacies", "search", "address", "Rue Sainte-Catherine"]
         }
       },
       "response": []
     },
     {
-      "name": "Search Pharmacies — By Free Text Term (GET /search/term?term=...)",
+      "name": "Search Pharmacies — By Free Text Term (GET /search/term/{term})",
       "request": {
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "{{baseUrl}}/pharmacies/search/term?term=Main Street",
+          "raw": "{{baseUrl}}/pharmacies/search/term/Main%20Street",
           "host": ["{{baseUrl}}"],
-          "path": ["pharmacies", "search", "term"],
-          "query": [
-            { "key": "term", "value": "Main Street" }
-          ]
+          "path": ["pharmacies", "search", "term", "Main Street"]
         }
       },
       "response": []
@@ -232,13 +214,9 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "{{baseUrl}}/pharmacies/search/location?city=Toronto&province=ON",
+          "raw": "{{baseUrl}}/pharmacies/search/location/city-province/Montréal/QC",
           "host": ["{{baseUrl}}"],
-          "path": ["pharmacies", "search", "location"],
-          "query": [
-            { "key": "city", "value": "Toronto" },
-            { "key": "province", "value": "ON" }
-          ]
+          "path": ["pharmacies", "search", "location", "city-province", "Montréal", "QC"]
         }
       },
       "response": []
@@ -249,13 +227,9 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "{{baseUrl}}/pharmacies/search/location?province=QC&postalCode=H3B1A7",
+          "raw": "{{baseUrl}}/pharmacies/search/location/province-postal/QC/H3B1A7",
           "host": ["{{baseUrl}}"],
-          "path": ["pharmacies", "search", "location"],
-          "query": [
-            { "key": "province", "value": "QC" },
-            { "key": "postalCode", "value": "H3B1A7" }
-          ]
+          "path": ["pharmacies", "search", "location", "province-postal", "QC", "H3B1A7"]
         }
       },
       "response": []
@@ -266,56 +240,13 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "{{baseUrl}}/pharmacies/search/location?city=Montréal&postalCode=H3B1A7",
+          "raw": "{{baseUrl}}/pharmacies/search/location/city-postal/Montréal/H3B1A7",
           "host": ["{{baseUrl}}"],
-          "path": ["pharmacies", "search", "location"],
-          "query": [
-            { "key": "city", "value": "Montréal" },
-            { "key": "postalCode", "value": "H3B1A7" }
-          ]
+          "path": ["pharmacies", "search", "location", "city-postal", "Montréal", "H3B1A7"]
         }
       },
       "response": []
     },
-    {
-      "name": "Search Pharmacies — Location (all three: city+province+postalCode)",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "{{baseUrl}}/pharmacies/search/location?city=Montréal&province=QC&postalCode=H3B1A7",
-          "host": ["{{baseUrl}}"],
-          "path": ["pharmacies", "search", "location"],
-          "query": [
-            { "key": "city", "value": "Montréal" },
-            { "key": "province", "value": "QC" },
-            { "key": "postalCode", "value": "H3B1A7" }
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "Search Pharmacies — Location (single: city only)",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "{{baseUrl}}/pharmacies/search/location?city=Montréal",
-          "host": ["{{baseUrl}}"],
-          "path": ["pharmacies", "search", "location"],
-          "query": [
-            { "key": "city", "value": "Montréal" }
-          ]
-        }
-      },
-      "response": []
-    },
-
-    /* ----------------------------- */
-    /* Existing Patient Search items */
-    /* ----------------------------- */
-
     {
       "name": "Search Store Patients - All Criteria",
       "request": {
@@ -378,24 +309,6 @@
         "body": {
           "mode": "raw",
           "raw": "{\n  \"firstName\": \"Alice\",\n  \"lastName\": \"Johnson\"\n}",
-          "options": {"raw": {"language": "json"}}
-        },
-        "url": {
-          "raw": "{{baseUrl}}/patients/search",
-          "host": ["{{baseUrl}}"],
-          "path": ["patients", "search"]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "Search Store Patients - By Store ID and First Name",
-      "request": {
-        "method": "POST",
-        "header": [],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"storeId\": \"101\",\n  \"firstName\": \"Alice\"\n}",
           "options": {"raw": {"language": "json"}}
         },
         "url": {
