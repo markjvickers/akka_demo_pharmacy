@@ -10,7 +10,6 @@ echo "stored-project=${stored_project}"
 #point to our project
 akka config set project demo-pharmacy
 
-
 # This function lists all Akka routes and then unexposes each one
 # by parsing the hostname from the output.
 unexpose_all_routes() {
@@ -24,16 +23,23 @@ unexpose_all_routes() {
   '
 }
 
-unexpose_all_routes
+tear_down_stores() {
+  # Read the JSON file
+  stores_json=$(cat ../config/stores.json)
 
-# tear down all project routes
-# akka routes list
-# akka service unexpose demo-pharmacy route
-#
-# tear down central
-# tear down all stores
-#akka service unexpose central
-#akka service delete central --hard
+  # Process each store
+  while IFS= read -r store; do
+    pharmacy_id=$(echo "$store" | jq -r '.pharmacyId')
+
+    echo "🏪 Tearing Down Store $pharmacy_id"
+    echo "store-$pharmacy_id" | akka service delete store-$pharmacy_id --hard
+
+  done < <(echo "$stores_json" | jq -c '.stores[]')
+}
+
+unexpose_all_routes
+echo "central" | akka service delete central --hard
+tear_down_stores
 
 #reset project to original
 akka config set project ${stored_project}
