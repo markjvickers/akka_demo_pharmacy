@@ -1002,6 +1002,62 @@
                 );
                 animation: shimmer 2s infinite;
             }
+
+            /* Architecture Section Styles */
+            .architecture-image {
+                max-width: 100%;
+                height: auto;
+                border: 2px solid var(--border-color);
+                border-radius: 12px;
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+                transition: all 0.3s ease;
+                cursor: pointer;
+            }
+
+            .architecture-image:hover {
+                transform: scale(1.02);
+                box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+            }
+
+            .architecture-features {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 20px;
+                margin-top: 20px;
+            }
+
+            .architecture-highlight {
+                padding: 20px;
+                background: linear-gradient(
+                    135deg,
+                    var(--card-background),
+                    rgba(79, 70, 229, 0.05)
+                );
+                border-radius: 12px;
+                border-left: 4px solid var(--primary-color);
+                transition: transform 0.2s ease;
+            }
+
+            .architecture-highlight:hover {
+                transform: translateY(-2px);
+            }
+
+            .feature-list {
+                margin: 0;
+                padding-left: 20px;
+                color: var(--text-color);
+                line-height: 1.6;
+            }
+
+            .feature-list li {
+                margin-bottom: 8px;
+            }
+
+            @media (max-width: 768px) {
+                .architecture-features {
+                    grid-template-columns: 1fr;
+                }
+            }
         </style>
     </head>
     <body>
@@ -1018,6 +1074,9 @@
                         </button>
                         <button class="nav-item" data-section="patients">
                             <i class="fas fa-users"></i> Patients
+                        </button>
+                        <button class="nav-item" data-section="architecture">
+                            <i class="fas fa-sitemap"></i> Architecture
                         </button>
                         <div class="status-indicator status-online"></div>
                         <span style="font-size: 0.875rem; opacity: 0.8"
@@ -1439,6 +1498,113 @@
                                 style="max-height: 600px; overflow-y: auto"
                             >
                                 <div id="patientSearchData"></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Architecture Section -->
+                <section id="architecture" class="section">
+                    <div class="section-header">
+                        <h1 class="section-title">System Architecture</h1>
+                        <p class="section-subtitle">
+                            Overview of the pharmacy solution architecture
+                        </p>
+                    </div>
+
+                    <div class="card full-width">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <i class="fas fa-sitemap"></i>
+                                Pharmacy Solution Architecture
+                            </h3>
+                        </div>
+                        <div style="text-align: center; padding: 20px">
+                            <img
+                                src="/static/arch.png"
+                                alt="Pharmacy Solution Architecture Diagram"
+                                class="architecture-image"
+                            />
+                            <p
+                                style="
+                                    margin-top: 10px;
+                                    font-size: 0.9em;
+                                    color: var(--text-secondary);
+                                    font-style: italic;
+                                "
+                            >
+                                Click image to zoom
+                            </p>
+                        </div>
+                        <div style="padding: 20px">
+                            <h4
+                                style="
+                                    color: var(--primary-color);
+                                    margin-bottom: 15px;
+                                "
+                            >
+                                <i class="fas fa-info-circle"></i> Architecture
+                                Overview
+                            </h4>
+                            <div class="architecture-features">
+                                <div class="data-card">
+                                    <div class="data-item">
+                                        <div class="data-label">
+                                            <i class="fas fa-cloud"></i> Cloud
+                                            Components
+                                        </div>
+                                        <div class="data-value">
+                                            Central management, coordination,
+                                            and data synchronization
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="data-card">
+                                    <div class="data-item">
+                                        <div class="data-label">
+                                            <i class="fas fa-server"></i>
+                                            On-Premise
+                                        </div>
+                                        <div class="data-value">
+                                            Local pharmacy stores with real-time
+                                            connectivity
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="data-card">
+                                    <div class="data-item">
+                                        <div class="data-label">
+                                            <i
+                                                class="fas fa-map-marker-alt"
+                                            ></i>
+                                            Provincial
+                                        </div>
+                                        <div class="data-value">
+                                            Regional health data integration and
+                                            compliance
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="architecture-highlight">
+                                <h5
+                                    style="
+                                        margin: 0 0 10px 0;
+                                        color: var(--primary-color);
+                                    "
+                                >
+                                    <i class="fas fa-lightbulb"></i> Key
+                                    Features
+                                </h5>
+                                <ul class="feature-list">
+                                    <li>Hybrid cloud-on-premise deployment</li>
+                                    <li>Real-time data synchronization</li>
+                                    <li>
+                                        Provincial health system integration
+                                    </li>
+                                    <li>Scalable microservices architecture</li>
+                                    <li>Secure patient data management</li>
+                                </ul>
                             </div>
                         </div>
                     </div>

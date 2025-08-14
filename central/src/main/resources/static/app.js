@@ -125,6 +125,7 @@ class UIManager {
     this.addInteractiveEffects();
     this.addAnimationStyles();
     this.updateSearchHistoryUI();
+    this.initArchitectureModal();
   }
 
   bindNavigation() {
@@ -1232,6 +1233,76 @@ class UIManager {
             }
         `;
     document.head.appendChild(style);
+  }
+
+  initArchitectureModal() {
+    // Add modal styles
+    const modalStyles = `
+      .architecture-modal {
+        display: none;
+        position: fixed;
+        z-index: 10000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.9);
+        cursor: pointer;
+      }
+
+      .architecture-modal img {
+        display: block;
+        margin: 50px auto;
+        max-width: 95%;
+        max-height: 90vh;
+        object-fit: contain;
+        border-radius: 8px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      }
+
+      .architecture-modal .close-hint {
+        position: absolute;
+        top: 20px;
+        right: 30px;
+        color: white;
+        font-size: 18px;
+        opacity: 0.8;
+      }
+    `;
+
+    const styleElement = document.createElement("style");
+    styleElement.textContent = modalStyles;
+    document.head.appendChild(styleElement);
+
+    // Create modal element
+    const modal = document.createElement("div");
+    modal.className = "architecture-modal";
+    modal.innerHTML = `
+      <div class="close-hint">Click to close</div>
+      <img src="/static/arch.png" alt="Architecture Diagram" />
+    `;
+    document.body.appendChild(modal);
+
+    // Add click handler to architecture image
+    const architectureImg = document.querySelector(".architecture-image");
+    if (architectureImg) {
+      architectureImg.addEventListener("click", (e) => {
+        e.stopPropagation();
+        modal.style.display = "block";
+      });
+    }
+
+    // Close modal when clicked
+    modal.addEventListener("click", () => {
+      modal.style.display = "none";
+    });
+
+    // Close modal with escape key
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && modal.style.display === "block") {
+        modal.style.display = "none";
+      }
+    });
   }
 }
 

@@ -59,6 +59,15 @@ public class StaticContentEndpoint extends AbstractHttpEndpoint {
                         getJavaScriptContent()
                     )
                 );
+        } else if ("arch.png".equals(filename)) {
+            return HttpResponse.create()
+                .withStatus(StatusCodes.OK)
+                .withEntity(
+                    HttpEntities.create(
+                        ContentTypes.create(MediaTypes.IMAGE_PNG),
+                        getImageContent("arch.png")
+                    )
+                );
         }
         // For other static files, return not found
         return HttpResponses.notFound();
@@ -117,6 +126,25 @@ public class StaticContentEndpoint extends AbstractHttpEndpoint {
         } catch (IOException e) {
             logger.error("Error reading app.js", e);
             return "console.log('Error loading JavaScript');";
+        }
+    }
+
+    private byte[] getImageContent(String filename) {
+        try {
+            InputStream inputStream = getClass().getResourceAsStream(
+                "/static/" + filename
+            );
+            if (inputStream == null) {
+                logger.warn("{} not found in resources", filename);
+                return new byte[0];
+            }
+
+            byte[] content = inputStream.readAllBytes();
+            inputStream.close();
+            return content;
+        } catch (IOException e) {
+            logger.error("Error reading {}", filename, e);
+            return new byte[0];
         }
     }
 
