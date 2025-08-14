@@ -218,8 +218,7 @@ public class PharmacySearchView extends View {
             PharmacyEvent.PharmacyDeleted event
         ) {
             logger.info(
-                "Pharmacy deleted from search view: {}",
-                currentState().pharmacyId()
+                "Pharmacy deleted from search view"
             );
             return effects().deleteRow();
         }
