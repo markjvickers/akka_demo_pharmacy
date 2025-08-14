@@ -1065,12 +1065,58 @@
                                         id="getPharmacyId"
                                         class="form-input"
                                         placeholder="Enter pharmacy ID"
-                                        required
                                     />
                                 </div>
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-search"></i> Search
-                                </button>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label" for="getPhCity">City</label>
+                                        <input type="text" id="getPhCity" class="form-input" placeholder="e.g., Montréal" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="getPhProvince">Province</label>
+                                        <select id="getPhProvince" class="form-input">
+                                            <option value="">All Provinces</option>
+                                            <option value="AB">Alberta</option>
+                                            <option value="BC">British Columbia</option>
+                                            <option value="MB">Manitoba</option>
+                                            <option value="NB">New Brunswick</option>
+                                            <option value="NL">Newfoundland & Labrador</option>
+                                            <option value="NS">Nova Scotia</option>
+                                            <option value="ON">Ontario</option>
+                                            <option value="PE">Prince Edward Island</option>
+                                            <option value="QC">Quebec</option>
+                                            <option value="SK">Saskatchewan</option>
+                                            <option value="NT">Northwest Territories</option>
+                                            <option value="NU">Nunavut</option>
+                                            <option value="YT">Yukon</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="getPhPostal">Postal Code</label>
+                                        <input type="text" id="getPhPostal" class="form-input" placeholder="e.g., H3B1A7" />
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label" for="getPhPhone">Phone Number</label>
+                                        <input type="text" id="getPhPhone" class="form-input" placeholder="e.g., 514-555-1234" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="getPhStreet">Street Address (exact)</label>
+                                        <input type="text" id="getPhStreet" class="form-input" placeholder="e.g., 123 Rue Sainte-Catherine Ouest" />
+                                    </div>
+                                </div>
+
+                                <div class="btn-group">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-search"></i> Search
+                                    </button>
+                                    <button type="button" id="clearFindPharmacyBtn" class="btn btn-secondary">
+                                        <i class="fas fa-eraser"></i> Clear
+                                    </button>
+                                </div>
                             </form>
                         </div>
 
@@ -1203,6 +1249,8 @@
                                 </div>
                             </form>
                         </div>
+
+                        <!-- Advanced Pharmacy Search Card removed -->
                     </div>
 
                     <!-- Pharmacy Results -->
@@ -1221,6 +1269,27 @@
                                 </button>
                             </div>
                             <div id="pharmacyData"></div>
+                        </div>
+                    </div>
+
+                    <!-- Advanced Pharmacy Search Results -->
+                    <div id="pharmacyAdvancedSearchResults" class="hidden">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">
+                                    <i class="fas fa-list"></i>
+                                    Search Results
+                                    <span id="pharmacySearchResultsCount" class="ml-2" style="font-size: 0.875rem; opacity: 0.8"></span>
+                                </h3>
+                                <div class="btn-group">
+                                    <button id="hidePharmacySearchResultsBtnTop" class="btn btn-secondary" style="font-size: 0.875rem; padding: 6px 12px;">
+                                        <i class="fas fa-times"></i> Close
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="pharmacySearchResultsContainer" style="max-height: 600px; overflow-y: auto">
+                                <div id="pharmacySearchData"></div>
+                            </div>
                         </div>
                     </div>
                 </section>

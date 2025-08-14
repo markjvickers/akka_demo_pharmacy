@@ -71,36 +71,33 @@ class PharmacyAPI {
     });
   }
 
-  // Patient API methods
-  async getPatient(storePatientId) {
-    return await this.request(`/patients/${storePatientId}`);
+  // Pharmacy search endpoints (path-based)
+  async searchPharmaciesByCity(city) {
+    return await this.request(`/pharmacies/search/city/${encodeURIComponent(city)}`);
   }
-
-  async addPatient(patient) {
-    return await this.request("/patients/patient", {
-      method: "PUT",
-      body: JSON.stringify(patient),
-    });
+  async searchPharmaciesByProvince(province) {
+    return await this.request(`/pharmacies/search/province/${encodeURIComponent(province)}`);
   }
-
-  async updatePatient(patient) {
-    return await this.request("/patients/patient", {
-      method: "POST",
-      body: JSON.stringify(patient),
-    });
+  async searchPharmaciesByPostalCode(postalCode) {
+    return await this.request(`/pharmacies/search/postal-code/${encodeURIComponent(postalCode)}`);
   }
-
-  async deletePatient(storePatientId) {
-    return await this.request(`/patients/${storePatientId}`, {
-      method: "DELETE",
-    });
+  async searchPharmaciesByPhone(phone) {
+    return await this.request(`/pharmacies/search/phone/${encodeURIComponent(phone)}`);
   }
-
-  async searchPatients(searchCriteria) {
-    return await this.request("/patients/search", {
-      method: "POST",
-      body: JSON.stringify(searchCriteria),
-    });
+  async searchPharmaciesByAddress(street) {
+    return await this.request(`/pharmacies/search/address/${encodeURIComponent(street)}`);
+  }
+  async searchPharmaciesByTerm(term) {
+    return await this.request(`/pharmacies/search/term/${encodeURIComponent(term)}`);
+  }
+  async searchPharmaciesCityProvince(city, province) {
+    return await this.request(`/pharmacies/search/location/city-province/${encodeURIComponent(city)}/${encodeURIComponent(province)}`);
+  }
+  async searchPharmaciesProvincePostal(province, postal) {
+    return await this.request(`/pharmacies/search/location/province-postal/${encodeURIComponent(province)}/${encodeURIComponent(postal)}`);
+  }
+  async searchPharmaciesCityPostal(city, postal) {
+    return await this.request(`/pharmacies/search/location/city-postal/${encodeURIComponent(city)}/${encodeURIComponent(postal)}`);
   }
 }
 
@@ -157,12 +154,12 @@ class UIManager {
   }
 
   bindForms() {
-    // Pharmacy forms
+    // Find Pharmacy form now supports advanced criteria
     document
       .getElementById("getPharmacyForm")
       .addEventListener("submit", (e) => {
         e.preventDefault();
-        this.handleGetPharmacy();
+        this.handleFindPharmacySearch();
       });
 
     document.getElementById("pharmacyForm").addEventListener("submit", (e) => {
@@ -171,8 +168,7 @@ class UIManager {
       this.handlePharmacySubmit(action);
     });
 
-    // Patient forms
-    // Advanced Patient Search form
+    // Patient forms retained
     document
       .getElementById("advancedPatientSearchForm")
       .addEventListener("submit", (e) => {
@@ -180,7 +176,6 @@ class UIManager {
         this.handleAdvancedPatientSearch();
       });
 
-    // Add real-time validation for search inputs
     this.bindSearchValidation();
   }
 
@@ -191,26 +186,35 @@ class UIManager {
         this.handleDeletePharmacy();
       });
 
-    // Advanced search buttons
+    // Clear for Find Pharmacy
+    const clearBtn = document.getElementById("clearFindPharmacyBtn");
+    if (clearBtn) {
+      clearBtn.addEventListener("click", () => this.clearFindPharmacyForm());
+    }
+
+    // Patient results controls
     document.getElementById("clearSearchBtn").addEventListener("click", () => {
       this.clearAdvancedSearchForm();
     });
-
     document.getElementById("quickSearchBtn").addEventListener("click", () => {
       this.handleQuickSearch();
     });
-
     document
       .getElementById("hideSearchResultsBtn")
       .addEventListener("click", () => {
         this.hideSearchResults();
       });
-
     document
       .getElementById("exportResultsBtn")
       .addEventListener("click", () => {
         this.exportSearchResults();
       });
+
+    // Hide list results (pharmacy)
+    const hideTop = document.getElementById("hidePharmacySearchResultsBtnTop");
+    const hideBottom = document.getElementById("hidePharmacySearchResultsBtn");
+    if (hideTop) hideTop.addEventListener("click", () => this.hidePharmacySearchResults());
+    if (hideBottom) hideBottom.addEventListener("click", () => this.hidePharmacySearchResults());
   }
 
   bindSearchValidation() {
@@ -760,6 +764,118 @@ class UIManager {
     this.handleAdvancedPatientSearch();
   }
 
+  // New: Advanced Pharmacy Search logic
+  async handleAdvancedPharmacySearch() {
+    const city = document.getElementById("advPhCity").value.trim();
+    const province = document.getElementById("advPhProvince").value.trim();
+    const postal = document.getElementById("advPhPostal").value.trim();
+    const phone = document.getElementById("advPhPhone").value.trim();
+    const street = document.getElementById("advPhStreet").value.trim();
+    const term = document.getElementById("advPhTerm").value.trim();
+
+    try {
+      this.showProgress();
+
+      let pharmacies = [];
+      if (city && province) {
+        pharmacies = await this.api.searchPharmaciesCityProvince(city, province);
+      } else if (province && postal) {
+        pharmacies = await this.api.searchPharmaciesProvincePostal(province, postal);
+      } else if (city && postal) {
+        pharmacies = await this.api.searchPharmaciesCityPostal(city, postal);
+      } else if (city) {
+        pharmacies = await this.api.searchPharmaciesByCity(city);
+      } else if (province) {
+        pharmacies = await this.api.searchPharmaciesByProvince(province);
+      } else if (postal) {
+        pharmacies = await this.api.searchPharmaciesByPostalCode(postal);
+      } else if (phone) {
+        pharmacies = await this.api.searchPharmaciesByPhone(phone);
+      } else if (street) {
+        pharmacies = await this.api.searchPharmaciesByAddress(street);
+      } else if (term) {
+        pharmacies = await this.api.searchPharmaciesByTerm(term);
+      }
+
+      this.renderPharmacySearchResults(pharmacies || []);
+    } catch (err) {
+      this.showAlert(`Search failed: ${err.message}`, "error");
+    } finally {
+      this.hideProgress();
+    }
+  }
+
+  renderPharmacySearchResults(pharmacies) {
+    const resultsWrap = document.getElementById("pharmacyAdvancedSearchResults");
+    const countEl = document.getElementById("pharmacySearchResultsCount");
+    const container = document.getElementById("pharmacySearchData");
+
+    if (!pharmacies || pharmacies.length === 0) {
+      resultsWrap.classList.remove("hidden");
+      countEl.textContent = "(0 found)";
+      container.innerHTML = `
+        <div class="search-empty-state">
+          <i class="fas fa-folder-open"></i>
+          <p>No pharmacies found. Try adjusting your criteria.</p>
+        </div>
+      `;
+      return;
+    }
+
+    countEl.textContent = `(${pharmacies.length} found)`;
+    resultsWrap.classList.remove("hidden");
+
+    container.innerHTML = pharmacies
+      .map(
+        (p) => `
+        <div class="search-result-item" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+          <div class="search-result-header">
+            <h4 class="search-result-name">${this.escapeHtml(p.city || "")} — ${this.escapeHtml(p.province || "")}</h4>
+            <span class="search-result-id">ID: ${this.escapeHtml(p.pharmacyId || "")}</span>
+          </div>
+          <div class="search-result-details">
+            <div class="search-detail-item">
+              <span class="search-detail-label">Address</span>
+              <span class="search-detail-value">${this.escapeHtml(p.streetAddress || "")}</span>
+            </div>
+            <div class="search-detail-item">
+              <span class="search-detail-label">Postal Code</span>
+              <span class="search-detail-value">${this.escapeHtml(p.postalCode || "")}</span>
+            </div>
+            <div class="search-detail-item">
+              <span class="search-detail-label">Phone</span>
+              <span class="search-detail-value">${this.escapeHtml(p.phoneNumber || "")}</span>
+            </div>
+            <div class="search-detail-item">
+              <span class="search-detail-label">Version</span>
+              <span class="search-detail-value">${this.escapeHtml(p.version || "")}</span>
+            </div>
+          </div>
+        </div>`,
+      )
+      .join("");
+  }
+
+  clearAdvancedPharmacySearchForm() {
+    [
+      "advPhCity",
+      "advPhProvince",
+      "advPhPostal",
+      "advPhPhone",
+      "advPhStreet",
+      "advPhTerm",
+    ].forEach((id) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (el.tagName.toLowerCase() === "select") el.selectedIndex = 0;
+      else el.value = "";
+    });
+  }
+
+  hidePharmacySearchResults() {
+    document.getElementById("pharmacyAdvancedSearchResults").classList.add("hidden");
+  }
+
   // Form data helpers
   getPharmacyFormData() {
     const pharmacyId = document.getElementById("pharmacyId").value.trim();
@@ -1282,7 +1398,6 @@ class UIManager {
 // Initialize the application
 document.addEventListener("DOMContentLoaded", () => {
   window.uiManager = new UIManager();
-  window.pharmacyUI = window.uiManager; // Keep backward compatibility
+  window.pharmacyUI = window.uiManager;
   console.log("Central Pharmacy Management System initialized");
-  console.log("Advanced Patient Search functionality loaded");
 });
