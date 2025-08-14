@@ -1,6 +1,11 @@
 #!/bin/bash
 # Assumes that you have previously installed the AKKA CLI and gh CLI, and authorized each.
 echo "Starting the pharmacy demo..."
+
+#store current context to set later
+stored-context=akka config current-context
+
+#point context to our project
 akka config use-context demo-pharmacy
 
 # only do this if we need to deploy central
@@ -86,3 +91,6 @@ else
   echo "Failed to confirm service readiness. Aborting."
   exit 1
 fi
+
+# reset current context
+akka config use-context $stored-context
