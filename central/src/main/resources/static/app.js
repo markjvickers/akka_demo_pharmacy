@@ -108,7 +108,6 @@ class UIManager {
   constructor() {
     this.currentSection = "pharmacy";
     this.currentPharmacy = null;
-    this.currentPatient = null;
     this.api = new PharmacyAPI();
     this.darkMode = false;
     this.progressValue = 0;
@@ -173,19 +172,6 @@ class UIManager {
     });
 
     // Patient forms
-    document
-      .getElementById("getPatientForm")
-      .addEventListener("submit", (e) => {
-        e.preventDefault();
-        this.handleGetPatient();
-      });
-
-    document.getElementById("patientForm").addEventListener("submit", (e) => {
-      e.preventDefault();
-      const action = e.submitter.dataset.action;
-      this.handlePatientSubmit(action);
-    });
-
     // Advanced Patient Search form
     document
       .getElementById("advancedPatientSearchForm")
@@ -203,12 +189,6 @@ class UIManager {
       .getElementById("deletePharmacyBtn")
       .addEventListener("click", () => {
         this.handleDeletePharmacy();
-      });
-
-    document
-      .getElementById("deletePatientBtn")
-      .addEventListener("click", () => {
-        this.handleDeletePatient();
       });
 
     // Advanced search buttons
@@ -364,86 +344,6 @@ class UIManager {
       this.clearPharmacyForm();
     } catch (error) {
       this.showAlert(`Error deleting pharmacy: ${error.message}`, "error");
-    } finally {
-      this.hideLoading();
-    }
-  }
-
-  // Patient handlers
-  async handleGetPatient() {
-    const storePatientId = document.getElementById("getPatientId").value.trim();
-    if (!storePatientId) {
-      this.showAlert("Please enter a store patient ID", "error");
-      return;
-    }
-
-    this.showLoading("Searching for patient...");
-    try {
-      const patient = await this.api.getPatient(storePatientId);
-      this.currentPatient = patient;
-      this.displayPatient(patient);
-      this.showAlert("Patient found successfully!", "success");
-    } catch (error) {
-      this.showAlert(`Error: ${error.message}`, "error");
-      this.hideResults();
-    } finally {
-      this.hideLoading();
-    }
-  }
-
-  async handlePatientSubmit(action) {
-    const formData = this.getPatientFormData();
-    if (!formData) return;
-
-    const actionText = action === "add" ? "Adding" : "Updating";
-    this.showLoading(`${actionText} patient...`);
-
-    try {
-      if (action === "add") {
-        await this.api.addPatient(formData);
-        this.showAlert("Patient added successfully!", "success");
-      } else {
-        await this.api.updatePatient(formData);
-        this.showAlert("Patient updated successfully!", "success");
-      }
-
-      // Refresh the display if we're viewing this patient
-      const storePatientId = `${formData.pharmacyId}-${formData.patientId}`;
-      if (
-        this.currentPatient &&
-        this.currentPatient.pharmacyId === formData.pharmacyId &&
-        this.currentPatient.patientId === formData.patientId
-      ) {
-        this.currentPatient = formData;
-        this.displayPatient(formData);
-      }
-    } catch (error) {
-      this.showAlert(`Error ${action}ing patient: ${error.message}`, "error");
-    } finally {
-      this.hideLoading();
-    }
-  }
-
-  async handleDeletePatient() {
-    if (!this.currentPatient) return;
-
-    const storePatientId = `${this.currentPatient.pharmacyId}-${this.currentPatient.patientId}`;
-    if (
-      !confirm(
-        `Are you sure you want to delete patient ${this.currentPatient.firstName} ${this.currentPatient.lastName}?`,
-      )
-    ) {
-      return;
-    }
-
-    this.showLoading("Deleting patient...");
-    try {
-      await this.api.deletePatient(storePatientId);
-      this.showAlert("Patient deleted successfully!", "success");
-      this.hideResults();
-      this.clearPatientForm();
-    } catch (error) {
-      this.showAlert(`Error deleting patient: ${error.message}`, "error");
     } finally {
       this.hideLoading();
     }
@@ -677,18 +577,6 @@ class UIManager {
     resultsSection.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
-  selectSearchResult(storePatientId) {
-    // Find the patient in current search results and display in the main patient view
-    const patient = this.currentSearchResults.find(
-      (p) => `${p.pharmacyId}-${p.patientId}` === storePatientId,
-    );
-    if (patient) {
-      this.currentPatient = patient;
-      this.displayPatient(patient);
-      document.getElementById("patientResults").classList.remove("hidden");
-    }
-  }
-
   generateSearchStats(results, criteria) {
     const uniqueStores = new Set(results.map((p) => p.pharmacyId)).size;
     const uniqueProvinces = new Set(results.map((p) => p.province)).size;
@@ -910,59 +798,6 @@ class UIManager {
     };
   }
 
-  getPatientFormData() {
-    const requiredFields = [
-      "patientPharmacyId",
-      "patientId",
-      "firstName",
-      "lastName",
-      "dateOfBirth",
-      "phoneNumber",
-      "provHealthNumber",
-      "streetNumber",
-      "streetName",
-      "city",
-      "province",
-      "postalCode",
-      "country",
-      "langPref",
-    ];
-
-    const data = {};
-    for (const fieldId of requiredFields) {
-      const value = document.getElementById(fieldId).value.trim();
-      if (!value) {
-        this.showAlert("Please fill in all required fields", "error");
-        return null;
-      }
-      data[fieldId] = value;
-    }
-
-    // Optional fields
-    const prefName = document.getElementById("prefName").value.trim();
-    const unitNumber = document.getElementById("unitNumber").value.trim();
-
-    return {
-      pharmacyId: data.patientPharmacyId,
-      patientId: data.patientId,
-      firstName: data.firstName,
-      lastName: data.lastName,
-      prefName: prefName || null,
-      dateOfBirth: data.dateOfBirth,
-      phoneNumber: data.phoneNumber,
-      provHealthNumber: data.provHealthNumber,
-      unitNumber: unitNumber || null,
-      streetNumber: data.streetNumber,
-      streetName: data.streetName,
-      city: data.city,
-      province: data.province,
-      postalCode: data.postalCode,
-      country: data.country,
-      langPref: data.langPref,
-      smsOptInPref: document.getElementById("smsOptInPref").checked,
-    };
-  }
-
   // Display helpers
   displayPharmacy(pharmacy) {
     const container = document.getElementById("pharmacyData");
@@ -1012,96 +847,15 @@ class UIManager {
     document.getElementById("pharmacyResults").classList.remove("hidden");
   }
 
-  displayPatient(patient) {
-    const container = document.getElementById("patientData");
-    container.innerHTML = `
-            <div class="data-grid">
-                <div class="data-item">
-                    <span class="data-label">Pharmacy ID</span>
-                    <span class="data-value">${patient.pharmacyId}</span>
-                </div>
-                <div class="data-item">
-                    <span class="data-label">Patient ID</span>
-                    <span class="data-value">${patient.patientId}</span>
-                </div>
-                <div class="data-item">
-                    <span class="data-label">Full Name</span>
-                    <span class="data-value">${patient.firstName} ${patient.lastName}</span>
-                </div>
-                <div class="data-item">
-                    <span class="data-label">Preferred Name</span>
-                    <span class="data-value">${patient.prefName || "N/A"}</span>
-                </div>
-                <div class="data-item">
-                    <span class="data-label">Date of Birth</span>
-                    <span class="data-value">${patient.dateOfBirth}</span>
-                </div>
-                <div class="data-item">
-                    <span class="data-label">Phone Number</span>
-                    <span class="data-value">${patient.phoneNumber}</span>
-                </div>
-                <div class="data-item">
-                    <span class="data-label">Provincial Health Number</span>
-                    <span class="data-value">${patient.provHealthNumber}</span>
-                </div>
-                <div class="data-item">
-                    <span class="data-label">Address</span>
-                    <span class="data-value">
-                        ${patient.unitNumber ? patient.unitNumber + "-" : ""}${patient.streetNumber} ${patient.streetName}<br>
-                        ${patient.city}, ${patient.province} ${patient.postalCode}<br>
-                        ${patient.country}
-                    </span>
-                </div>
-                <div class="data-item">
-                    <span class="data-label">Language Preference</span>
-                    <span class="data-value">${patient.langPref.toUpperCase()}</span>
-                </div>
-                <div class="data-item">
-                    <span class="data-label">SMS Opt-in</span>
-                    <span class="data-value">${patient.smsOptInPref ? "Yes" : "No"}</span>
-                </div>
-            </div>
-        `;
-
-    // Populate form for editing
-    document.getElementById("patientPharmacyId").value = patient.pharmacyId;
-    document.getElementById("patientId").value = patient.patientId;
-    document.getElementById("firstName").value = patient.firstName;
-    document.getElementById("lastName").value = patient.lastName;
-    document.getElementById("prefName").value = patient.prefName || "";
-    document.getElementById("dateOfBirth").value = patient.dateOfBirth;
-    document.getElementById("phoneNumber").value = patient.phoneNumber;
-    document.getElementById("provHealthNumber").value =
-      patient.provHealthNumber;
-    document.getElementById("unitNumber").value = patient.unitNumber || "";
-    document.getElementById("streetNumber").value = patient.streetNumber;
-    document.getElementById("streetName").value = patient.streetName;
-    document.getElementById("city").value = patient.city;
-    document.getElementById("province").value = patient.province;
-    document.getElementById("postalCode").value = patient.postalCode;
-    document.getElementById("country").value = patient.country;
-    document.getElementById("langPref").value = patient.langPref;
-    document.getElementById("smsOptInPref").checked = patient.smsOptInPref;
-
-    document.getElementById("patientResults").classList.remove("hidden");
-  }
-
   // Utility methods
   hideResults() {
     document.getElementById("pharmacyResults").classList.add("hidden");
-    document.getElementById("patientResults").classList.add("hidden");
     document.getElementById("patientSearchResults").classList.add("hidden");
   }
 
   clearPharmacyForm() {
     document.getElementById("pharmacyForm").reset();
     document.getElementById("pharmacyVersion").value = "1.0";
-  }
-
-  clearPatientForm() {
-    document.getElementById("patientForm").reset();
-    document.getElementById("country").value = "Canada";
-    document.getElementById("langPref").value = "en";
   }
 
   showAlert(message, type = "info") {
