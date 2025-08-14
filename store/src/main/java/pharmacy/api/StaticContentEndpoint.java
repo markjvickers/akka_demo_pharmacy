@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 import pharmacy.domain.PharmacyId;
 
 @Acl(allow = @Acl.Matcher(principal = Acl.Principal.INTERNET))
-@HttpEndpoint("/store")
+@HttpEndpoint("/")
 public class StaticContentEndpoint extends AbstractHttpEndpoint {
 
     private static final Logger logger = LoggerFactory.getLogger(
@@ -166,11 +166,11 @@ public class StaticContentEndpoint extends AbstractHttpEndpoint {
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>Pharmacy Store %s - Patient Management</title>
-            <link rel="stylesheet" href="/store/static/styles.css">
+            <link rel="stylesheet" href="/static/styles.css">
         </head>
         <body>
             <div id="root">Loading...</div>
-            <script src="/store/static/app.js"></script>
+            <script src="/static/app.js"></script>
         </body>
         </html>
         """.formatted(pharmacyId.id());
