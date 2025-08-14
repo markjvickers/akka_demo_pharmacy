@@ -49,7 +49,7 @@ is_service_ready() {
 if is_service_ready "central" 200; then
 
   echo "Proceeding with deployment..."
-  akka service expose central
+  akka service expose central --project demo-pharmacy
 
   # this deploys each of the stores
   # Again, you'll need to wait here
