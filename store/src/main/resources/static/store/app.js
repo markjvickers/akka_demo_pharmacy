@@ -78,6 +78,15 @@ const api = {
   async getDeliverySummary() {
     return this.request("/patients/delivery/summary");
   },
+
+  // Pharmacy information
+  async getPharmacyInfo() {
+    return this.request("/pharmacy/info");
+  },
+
+  async getPharmacyId() {
+    return this.request("/pharmacy/id");
+  },
 };
 
 // Alert component
@@ -609,6 +618,7 @@ function App() {
   const [alert, setAlert] = useState(null);
   const [activeTab, setActiveTab] = useState("patients");
   const [deliverySummary, setDeliverySummary] = useState(null);
+  const [pharmacyInfo, setPharmacyInfo] = useState(null);
 
   // Modal states
   const [showPatientModal, setShowPatientModal] = useState(false);
@@ -653,6 +663,16 @@ function App() {
     }
   }, []);
 
+  const loadPharmacyInfo = useCallback(async () => {
+    try {
+      const info = await api.getPharmacyInfo();
+      setPharmacyInfo(info);
+    } catch (error) {
+      console.error("Error loading pharmacy info:", error);
+      showAlert("error", `Failed to load pharmacy info: ${error.message}`);
+    }
+  }, []);
+
   useEffect(() => {
     const delayedSearch = setTimeout(() => {
       searchPatients();
@@ -666,6 +686,10 @@ function App() {
       loadDeliverySummary();
     }
   }, [activeTab, loadDeliverySummary]);
+
+  useEffect(() => {
+    loadPharmacyInfo();
+  }, [loadPharmacyInfo]);
 
   const handleCreatePatient = async (patientData) => {
     try {
@@ -729,7 +753,20 @@ function App() {
         <div className="header-content">
           <div className="logo">
             <i className="fas fa-pills"></i>
-            Pharmacy Store - Patient Management
+            <div className="logo-text">
+              <div className="logo-title">Pharmacy Store</div>
+              {pharmacyInfo ? (
+                <div className="store-number">
+                  <i className="fas fa-store"></i>
+                  Store #{pharmacyInfo.storeNumber}
+                </div>
+              ) : (
+                <div className="store-number loading">
+                  <i className="fas fa-spinner fa-spin"></i>
+                  Loading store info...
+                </div>
+              )}
+            </div>
           </div>
           <div className="header-actions">
             <button
