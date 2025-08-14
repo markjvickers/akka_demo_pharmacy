@@ -3,7 +3,7 @@
 echo "Starting the pharmacy demo..."
 
 #store current context to set later
-stored-context=akka config current-context
+stored-context=$(akka config current-context)
 
 #point context to our project
 akka config use-context demo-pharmacy
