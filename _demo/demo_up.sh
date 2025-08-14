@@ -31,7 +31,7 @@ is_service_ready() {
     # grep finds the line for the service
     # awk extracts the 4th column (STATUS)
     local status
-    status=$(akka service list | grep "^$service_name\b" | awk '{print $4}')
+    status=$(akka service list --project demo-pharmacy | grep "^$service_name\b" | awk '{print $4}')
 
     if [[ "$status" == "Ready" ]]; then
       echo "✅ Service '$service_name' is Ready."
@@ -58,14 +58,14 @@ if is_service_ready "central" 200; then
   echo "Waiting for the stores are deployed..."
 
   if is_service_ready "store-101" 200; then
-    akka service expose store-101
+    akka service expose store-101 --project demo-pharmacy
   else
       echo "Failed to confirm service readiness. Aborting."
       exit 1
   fi
 
   if is_service_ready "store-102" 200; then
-    akka service expose store-102
+    akka service expose store-102 --project demo-pharmacy
   else
       echo "Failed to confirm service readiness. Aborting."
       exit 1
