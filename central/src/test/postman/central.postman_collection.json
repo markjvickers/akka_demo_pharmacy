@@ -1,219 +1,329 @@
 {
-	"info": {
-		"_postman_id": "37c4a2b3-5cee-4fa5-9fc6-f06140df614a",
-		"name": "central",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "34380732"
-	},
-	"item": [
-		{
-			"name": "Get Store Patient",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{baseUrl}}/patients/101-a0ae1e15-bb87-4a36-90fe-a0a7e63aca4a",
-					"host": [
-						"{{baseUrl}}"
-					],
-					"path": [
-						"patients",
-						"101-a0ae1e15-bb87-4a36-90fe-a0a7e63aca4a"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Add Store Patient",
-			"request": {
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"pharmacyId\": \"101\",\n  \"patientId\": \"a0ae1e15-bb87-4a36-90fe-a0a7e63aca4a\",    \n  \"firstName\": \"Alice\",\n  \"lastName\": \"Johnson\",\n  \"prefName\": \"Ally\",\n  \"dateOfBirth\": \"1985-07-14\",\n  \"phoneNumber\": \"555-123-4567\",\n  \"provHealthNumber\": \"PHN1234567\",\n  \"unitNumber\": \"5B\",\n  \"streetNumber\": \"123\",\n  \"streetName\": \"Main Street\",\n  \"city\": \"Vancouver\",\n  \"province\": \"BC\",\n  \"postalCode\": \"V5K0A1\",\n  \"country\": \"Canada\",\n  \"langPref\": \"en\",\n  \"smsOptInPref\": true\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{baseUrl}}/patients/patient",
-					"host": [
-						"{{baseUrl}}"
-					],
-					"path": [
-						"patients",
-						"patient"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Update Store Patient",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"pharmacyId\": \"101\",\n  \"patientId\": \"a0ae1e15-bb87-4a36-90fe-a0a7e63aca4a\",    \n  \"firstName\": \"Alicia\",\n  \"lastName\": \"Johnson\",\n  \"prefName\": \"Ally\",\n  \"dateOfBirth\": \"1985-07-14\",\n  \"phoneNumber\": \"555-123-4567\",\n  \"provHealthNumber\": \"PHN1234567\",\n  \"unitNumber\": \"5B\",\n  \"streetNumber\": \"123\",\n  \"streetName\": \"Main Street\",\n  \"city\": \"Vancouver\",\n  \"province\": \"BC\",\n  \"postalCode\": \"V5K0A1\",\n  \"country\": \"Canada\",\n  \"langPref\": \"en\",\n  \"smsOptInPref\": true\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{baseUrl}}/patients/patient",
-					"host": [
-						"{{baseUrl}}"
-					],
-					"path": [
-						"patients",
-						"patient"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Delete Store Patient",
-			"request": {
-				"method": "DELETE",
-				"header": [],
-				"url": {
-					"raw": "{{baseUrl}}/patients/101-a0ae1e15-bb87-4a36-90fe-a0a7e63aca4a",
-					"host": [
-						"{{baseUrl}}"
-					],
-					"path": [
-						"patients",
-						"101-a0ae1e15-bb87-4a36-90fe-a0a7e63aca4a"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get Pharmacy",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{baseUrl}}/pharmacies/103",
-					"host": [
-						"{{baseUrl}}"
-					],
-					"path": [
-						"pharmacies",
-						"103"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Add Pharmacy",
-			"request": {
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"pharmacyId\": \"104\",\n  \"streetAddress\": \"123 Rue Sainte-Catherine Ouest\",\n  \"city\": \"Montréal\",\n  \"province\": \"QC\",\n  \"postalCode\": \"H3B 1A7\",\n  \"phoneNumber\": \"514-555-1234\",\n  \"version\": \"1.0\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{baseUrl}}/pharmacies/pharmacy",
-					"host": [
-						"{{baseUrl}}"
-					],
-					"path": [
-						"pharmacies",
-						"pharmacy"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Update Pharmacy",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"pharmacyId\": \"101\",\n  \"address\": \"123 Rue Sainte-Catherine Ouest, Montréal, QC H3B 1A7\",\n  \"phoneNumber\": \"514-867-5309\",\n  \"version\": \"1.0\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{baseUrl}}/pharmacies/pharmacy",
-					"host": [
-						"{{baseUrl}}"
-					],
-					"path": [
-						"pharmacies",
-						"pharmacy"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Delete Pharmacy",
-			"request": {
-				"method": "DELETE",
-				"header": [],
-				"url": {
-					"raw": "{{baseUrl}}/pharmacies/101",
-					"host": [
-						"{{baseUrl}}"
-					],
-					"path": [
-						"pharmacies",
-						"101"
-					]
-				}
-			},
-			"response": []
-		}
-	],
-	"event": [
-		{
-			"listen": "prerequest",
-			"script": {
-				"type": "text/javascript",
-				"packages": {},
-				"exec": [
-					""
-				]
-			}
-		},
-		{
-			"listen": "test",
-			"script": {
-				"type": "text/javascript",
-				"packages": {},
-				"exec": [
-					""
-				]
-			}
-		}
-	],
-	"variable": [
-		{
-			"key": "baseUrl",
-			"value": "http://127.0.0.1:9001",
-			"type": "string"
-		}
-	]
+  "info": {
+    "_postman_id": "37c4a2b3-5cee-4fa5-9fc6-f06140df614a",
+    "name": "central",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "34380732"
+  },
+  "item": [
+    {
+      "name": "Get Store Patient",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/patients/101-a0ae1e15-bb87-4a36-90fe-a0a7e63aca4a",
+          "host": ["{{baseUrl}}"],
+          "path": ["patients", "101-a0ae1e15-bb87-4a36-90fe-a0a7e63aca4a"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Add Store Patient",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"pharmacyId\": \"101\",\n  \"patientId\": \"a0ae1e15-bb87-4a36-90fe-a0a7e63aca4a\",    \n  \"firstName\": \"Alice\",\n  \"lastName\": \"Johnson\",\n  \"prefName\": \"Ally\",\n  \"dateOfBirth\": \"1985-07-14\",\n  \"phoneNumber\": \"555-123-4567\",\n  \"provHealthNumber\": \"PHN1234567\",\n  \"unitNumber\": \"5B\",\n  \"streetNumber\": \"123\",\n  \"streetName\": \"Main Street\",\n  \"city\": \"Vancouver\",\n  \"province\": \"BC\",\n  \"postalCode\": \"V5K0A1\",\n  \"country\": \"Canada\",\n  \"langPref\": \"en\",\n  \"smsOptInPref\": true\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/patients/patient",
+          "host": ["{{baseUrl}}"],
+          "path": ["patients", "patient"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update Store Patient",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"pharmacyId\": \"101\",\n  \"patientId\": \"a0ae1e15-bb87-4a36-90fe-a0a7e63aca4a\",    \n  \"firstName\": \"Alicia\",\n  \"lastName\": \"Johnson\",\n  \"prefName\": \"Ally\",\n  \"dateOfBirth\": \"1985-07-14\",\n  \"phoneNumber\": \"555-123-4567\",\n  \"provHealthNumber\": \"PHN1234567\",\n  \"unitNumber\": \"5B\",\n  \"streetNumber\": \"123\",\n  \"streetName\": \"Main Street\",\n  \"city\": \"Vancouver\",\n  \"province\": \"BC\",\n  \"postalCode\": \"V5K0A1\",\n  \"country\": \"Canada\",\n  \"langPref\": \"en\",\n  \"smsOptInPref\": true\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/patients/patient",
+          "host": ["{{baseUrl}}"],
+          "path": ["patients", "patient"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete Store Patient",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/patients/101-a0ae1e15-bb87-4a36-90fe-a0a7e63aca4a",
+          "host": ["{{baseUrl}}"],
+          "path": ["patients", "101-a0ae1e15-bb87-4a36-90fe-a0a7e63aca4a"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Pharmacy",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/pharmacies/103",
+          "host": ["{{baseUrl}}"],
+          "path": ["pharmacies", "103"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Add Pharmacy",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"pharmacyId\": \"104\",\n  \"streetAddress\": \"123 Rue Sainte-Catherine Ouest\",\n  \"city\": \"Montréal\",\n  \"province\": \"QC\",\n  \"postalCode\": \"H3B 1A7\",\n  \"phoneNumber\": \"514-555-1234\",\n  \"version\": \"1.0\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/pharmacies/pharmacy",
+          "host": ["{{baseUrl}}"],
+          "path": ["pharmacies", "pharmacy"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update Pharmacy",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"pharmacyId\": \"101\",\n  \"address\": \"123 Rue Sainte-Catherine Ouest, Montréal, QC H3B 1A7\",\n  \"phoneNumber\": \"514-867-5309\",\n  \"version\": \"1.0\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/pharmacies/pharmacy",
+          "host": ["{{baseUrl}}"],
+          "path": ["pharmacies", "pharmacy"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete Pharmacy",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/pharmacies/101",
+          "host": ["{{baseUrl}}"],
+          "path": ["pharmacies", "101"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Search Store Patients - All Criteria",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"storeId\": \"101\",\n  \"province\": \"BC\",\n  \"firstName\": \"Alice\",\n  \"lastName\": \"Johnson\",\n  \"healthNumber\": \"PHN1234567\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/patients/search",
+          "host": ["{{baseUrl}}"],
+          "path": ["patients", "search"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Search Store Patients - By Store ID Only",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"storeId\": \"101\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/patients/search",
+          "host": ["{{baseUrl}}"],
+          "path": ["patients", "search"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Search Store Patients - By Province Only",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"province\": \"BC\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/patients/search",
+          "host": ["{{baseUrl}}"],
+          "path": ["patients", "search"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Search Store Patients - By First and Last Name",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"firstName\": \"Alice\",\n  \"lastName\": \"Johnson\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/patients/search",
+          "host": ["{{baseUrl}}"],
+          "path": ["patients", "search"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Search Store Patients - By Store ID and First Name",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"storeId\": \"101\",\n  \"firstName\": \"Alice\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/patients/search",
+          "host": ["{{baseUrl}}"],
+          "path": ["patients", "search"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Search Store Patients - By Health Number",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"healthNumber\": \"PHN1234567\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/patients/search",
+          "host": ["{{baseUrl}}"],
+          "path": ["patients", "search"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Search Store Patients - By Province and Full Name",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"province\": \"BC\",\n  \"firstName\": \"Alice\",\n  \"lastName\": \"Johnson\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/patients/search",
+          "host": ["{{baseUrl}}"],
+          "path": ["patients", "search"]
+        }
+      },
+      "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "exec": [""]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "exec": [""]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://127.0.0.1:9001",
+      "type": "string"
+    }
+  ]
 }
