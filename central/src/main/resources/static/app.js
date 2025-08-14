@@ -95,6 +95,13 @@ class PharmacyAPI {
       method: "DELETE",
     });
   }
+
+  async searchPatients(searchCriteria) {
+    return await this.request("/patients/search", {
+      method: "POST",
+      body: JSON.stringify(searchCriteria),
+    });
+  }
 }
 
 class UIManager {
@@ -105,6 +112,7 @@ class UIManager {
     this.api = new PharmacyAPI();
     this.darkMode = false;
     this.progressValue = 0;
+    this.searchHistory = this.loadSearchHistory();
     this.init();
   }
 
@@ -117,6 +125,7 @@ class UIManager {
     this.initProgressBar();
     this.addInteractiveEffects();
     this.addAnimationStyles();
+    this.updateSearchHistoryUI();
   }
 
   bindNavigation() {
@@ -176,6 +185,17 @@ class UIManager {
       const action = e.submitter.dataset.action;
       this.handlePatientSubmit(action);
     });
+
+    // Advanced Patient Search form
+    document
+      .getElementById("advancedPatientSearchForm")
+      .addEventListener("submit", (e) => {
+        e.preventDefault();
+        this.handleAdvancedPatientSearch();
+      });
+
+    // Add real-time validation for search inputs
+    this.bindSearchValidation();
   }
 
   bindButtons() {
@@ -190,6 +210,86 @@ class UIManager {
       .addEventListener("click", () => {
         this.handleDeletePatient();
       });
+
+    // Advanced search buttons
+    document.getElementById("clearSearchBtn").addEventListener("click", () => {
+      this.clearAdvancedSearchForm();
+    });
+
+    document.getElementById("quickSearchBtn").addEventListener("click", () => {
+      this.handleQuickSearch();
+    });
+
+    document
+      .getElementById("hideSearchResultsBtn")
+      .addEventListener("click", () => {
+        this.hideSearchResults();
+      });
+
+    document
+      .getElementById("exportResultsBtn")
+      .addEventListener("click", () => {
+        this.exportSearchResults();
+      });
+  }
+
+  bindSearchValidation() {
+    // Store ID validation
+    document.getElementById("searchStoreId").addEventListener("input", (e) => {
+      this.validateStoreId(e.target);
+    });
+
+    // Health number validation
+    document
+      .getElementById("searchHealthNumber")
+      .addEventListener("input", (e) => {
+        this.validateHealthNumber(e.target);
+      });
+
+    // Name validation
+    const nameInputs = ["searchFirstName", "searchLastName"];
+    nameInputs.forEach((inputId) => {
+      document.getElementById(inputId).addEventListener("input", (e) => {
+        this.validateNameInput(e.target);
+      });
+    });
+  }
+
+  validateStoreId(input) {
+    const value = input.value.trim();
+    if (value && !/^\d+$/.test(value)) {
+      input.setCustomValidity("Store ID should contain only numbers");
+      input.style.borderColor = "#ef4444";
+    } else {
+      input.setCustomValidity("");
+      input.style.borderColor = "";
+    }
+  }
+
+  validateHealthNumber(input) {
+    const value = input.value.trim();
+    if (value && !/^[A-Z0-9]+$/i.test(value)) {
+      input.setCustomValidity(
+        "Health number should contain only letters and numbers",
+      );
+      input.style.borderColor = "#ef4444";
+    } else {
+      input.setCustomValidity("");
+      input.style.borderColor = "";
+    }
+  }
+
+  validateNameInput(input) {
+    const value = input.value.trim();
+    if (value && !/^[a-zA-Z\s'-]+$/.test(value)) {
+      input.setCustomValidity(
+        "Name should contain only letters, spaces, apostrophes, and hyphens",
+      );
+      input.style.borderColor = "#ef4444";
+    } else {
+      input.setCustomValidity("");
+      input.style.borderColor = "";
+    }
   }
 
   // Pharmacy handlers
@@ -347,6 +447,429 @@ class UIManager {
     } finally {
       this.hideLoading();
     }
+  }
+
+  // Advanced Patient Search methods
+  async handleAdvancedPatientSearch() {
+    // Validate form before searching
+    if (!this.validateSearchForm()) {
+      return;
+    }
+
+    const searchCriteria = this.getSearchCriteria();
+
+    // Check if at least one search criterion is provided
+    const hasSearchCriteria = Object.values(searchCriteria).some(
+      (value) => value !== null && value !== undefined && value.trim() !== "",
+    );
+
+    if (!hasSearchCriteria) {
+      this.showAlert("Please enter at least one search criterion", "error");
+      return;
+    }
+
+    this.showLoading("Searching patients...");
+
+    try {
+      const results = await this.api.searchPatients(searchCriteria);
+      this.saveSearchHistory(searchCriteria);
+      this.displaySearchResults(results, searchCriteria);
+      this.showAlert(`Found ${results.length} patient(s)`, "success");
+    } catch (error) {
+      this.showAlert(`Search failed: ${error.message}`, "error");
+    } finally {
+      this.hideLoading();
+    }
+  }
+
+  handleQuickSearch() {
+    // Auto-fill with common search patterns
+    const quickSearchOptions = [
+      { label: "BC Patients", province: "BC" },
+      { label: "Store 101", storeId: "101" },
+      { label: "Ontario Patients", province: "ON" },
+      { label: "Alberta Patients", province: "AB" },
+      { label: "Quebec Patients", province: "QC" },
+      { label: "Store 102", storeId: "102" },
+      { label: "Store 103", storeId: "103" },
+      { label: "All Smiths", lastName: "Smith" },
+    ];
+
+    // Create quick search chips if they don't exist
+    let chipsContainer = document.querySelector(".quick-search-chips");
+    if (!chipsContainer) {
+      chipsContainer = document.createElement("div");
+      chipsContainer.className = "quick-search-chips";
+
+      quickSearchOptions.forEach((option) => {
+        const chip = document.createElement("button");
+        chip.className = "search-chip";
+        chip.textContent = option.label;
+        chip.onclick = () => {
+          this.clearAdvancedSearchForm();
+          if (option.storeId)
+            document.getElementById("searchStoreId").value = option.storeId;
+          if (option.province)
+            document.getElementById("searchProvince").value = option.province;
+          this.handleAdvancedPatientSearch();
+        };
+        chipsContainer.appendChild(chip);
+      });
+
+      document
+        .getElementById("advancedPatientSearchForm")
+        .appendChild(chipsContainer);
+    }
+  }
+
+  clearAdvancedSearchForm() {
+    document.getElementById("searchStoreId").value = "";
+    document.getElementById("searchProvince").value = "";
+    document.getElementById("searchFirstName").value = "";
+    document.getElementById("searchLastName").value = "";
+    document.getElementById("searchHealthNumber").value = "";
+  }
+
+  hideSearchResults() {
+    document.getElementById("patientSearchResults").classList.add("hidden");
+  }
+
+  exportSearchResults() {
+    const results = this.currentSearchResults || [];
+    if (results.length === 0) {
+      this.showAlert("No results to export", "info");
+      return;
+    }
+
+    const csvContent = this.convertToCSV(results);
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute(
+      "download",
+      `patient_search_results_${new Date().toISOString().split("T")[0]}.csv`,
+    );
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    this.showAlert("Results exported successfully!", "success");
+  }
+
+  validateSearchForm() {
+    const inputs = [
+      document.getElementById("searchStoreId"),
+      document.getElementById("searchHealthNumber"),
+      document.getElementById("searchFirstName"),
+      document.getElementById("searchLastName"),
+    ];
+
+    let isValid = true;
+    inputs.forEach((input) => {
+      if (!input.checkValidity()) {
+        input.reportValidity();
+        isValid = false;
+      }
+    });
+
+    return isValid;
+  }
+
+  getSearchCriteria() {
+    return {
+      storeId:
+        document.getElementById("searchStoreId").value.trim() || undefined,
+      province: document.getElementById("searchProvince").value || undefined,
+      firstName:
+        document.getElementById("searchFirstName").value.trim() || undefined,
+      lastName:
+        document.getElementById("searchLastName").value.trim() || undefined,
+      healthNumber:
+        document.getElementById("searchHealthNumber").value.trim() || undefined,
+    };
+  }
+
+  displaySearchResults(results, searchCriteria) {
+    this.currentSearchResults = results;
+    const container = document.getElementById("patientSearchData");
+    const countElement = document.getElementById("searchResultsCount");
+    const resultsSection = document.getElementById("patientSearchResults");
+
+    countElement.textContent = `(${results.length} found)`;
+
+    if (results.length === 0) {
+      container.innerHTML = `
+        <div class="search-empty-state">
+          <i class="fas fa-search"></i>
+          <h3>No patients found</h3>
+          <p>Try adjusting your search criteria or use broader terms.</p>
+        </div>
+      `;
+    } else {
+      // Create search stats
+      const stats = this.generateSearchStats(results, searchCriteria);
+
+      let html = `
+        <div class="search-stats">
+          <div class="search-stat">
+            <i class="fas fa-users"></i>
+            <span><strong>${results.length}</strong> patients</span>
+          </div>
+          <div class="search-stat">
+            <i class="fas fa-building"></i>
+            <span><strong>${stats.uniqueStores}</strong> stores</span>
+          </div>
+          <div class="search-stat">
+            <i class="fas fa-map-marker-alt"></i>
+            <span><strong>${stats.uniqueProvinces}</strong> provinces</span>
+          </div>
+        </div>
+        <div class="search-results-grid">
+      `;
+
+      results.forEach((patient) => {
+        html += `
+          <div class="search-result-item" onclick="uiManager.selectSearchResult('${patient.pharmacyId}-${patient.patientId}')">
+            <div class="search-result-header">
+              <h4 class="search-result-name">
+                ${this.highlightSearchTerms(patient.firstName, searchCriteria.firstName)} ${this.highlightSearchTerms(patient.lastName, searchCriteria.lastName)}
+                ${patient.prefName && patient.prefName !== "" ? ` (${patient.prefName})` : ""}
+              </h4>
+              <span class="search-result-id">${patient.pharmacyId}-${patient.patientId}</span>
+            </div>
+            <div class="search-result-details">
+              <div class="search-detail-item">
+                <span class="search-detail-label">Store ID</span>
+                <span class="search-detail-value">${patient.pharmacyId}</span>
+              </div>
+              <div class="search-detail-item">
+                <span class="search-detail-label">Province</span>
+                <span class="search-detail-value">${patient.province}</span>
+              </div>
+              <div class="search-detail-item">
+                <span class="search-detail-label">City</span>
+                <span class="search-detail-value">${patient.city}</span>
+              </div>
+              <div class="search-detail-item">
+                <span class="search-detail-label">Phone</span>
+                <span class="search-detail-value">${patient.phoneNumber}</span>
+              </div>
+              <div class="search-detail-item">
+                <span class="search-detail-label">Health Number</span>
+                <span class="search-detail-value">${patient.provHealthNumber}</span>
+              </div>
+              <div class="search-detail-item">
+                <span class="search-detail-label">Language</span>
+                <span class="search-detail-value">${patient.langPref.toUpperCase()}</span>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+
+      html += "</div>";
+      container.innerHTML = html;
+    }
+
+    resultsSection.classList.remove("hidden");
+    resultsSection.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  selectSearchResult(storePatientId) {
+    // Find the patient in current search results and display in the main patient view
+    const patient = this.currentSearchResults.find(
+      (p) => `${p.pharmacyId}-${p.patientId}` === storePatientId,
+    );
+    if (patient) {
+      this.currentPatient = patient;
+      this.displayPatient(patient);
+      document.getElementById("patientResults").classList.remove("hidden");
+    }
+  }
+
+  generateSearchStats(results, criteria) {
+    const uniqueStores = new Set(results.map((p) => p.pharmacyId)).size;
+    const uniqueProvinces = new Set(results.map((p) => p.province)).size;
+
+    return {
+      uniqueStores,
+      uniqueProvinces,
+    };
+  }
+
+  convertToCSV(results) {
+    const headers = [
+      "Store ID",
+      "Patient ID",
+      "First Name",
+      "Last Name",
+      "Preferred Name",
+      "Date of Birth",
+      "Phone",
+      "Health Number",
+      "Address",
+      "City",
+      "Province",
+      "Postal Code",
+      "Language",
+      "SMS Opt-in",
+    ];
+
+    let csv = headers.join(",") + "\n";
+
+    results.forEach((patient) => {
+      const address = [
+        patient.unitNumber,
+        patient.streetNumber,
+        patient.streetName,
+      ]
+        .filter(Boolean)
+        .join(" ");
+
+      const row = [
+        patient.pharmacyId,
+        patient.patientId,
+        patient.firstName,
+        patient.lastName,
+        patient.prefName && patient.prefName !== "" ? patient.prefName : "",
+        patient.dateOfBirth,
+        patient.phoneNumber,
+        patient.provHealthNumber,
+        address,
+        patient.city,
+        patient.province,
+        patient.postalCode,
+        patient.langPref,
+        patient.smsOptInPref ? "Yes" : "No",
+      ]
+        .map((field) => `"${field}"`)
+        .join(",");
+
+      csv += row + "\n";
+    });
+
+    return csv;
+  }
+
+  highlightSearchTerms(text, searchTerm) {
+    if (!searchTerm || !text) return text;
+    const regex = new RegExp(`(${searchTerm})`, "gi");
+    return text.replace(
+      regex,
+      '<mark style="background-color: #fef3c7; color: #92400e; padding: 1px 3px; border-radius: 3px;">$1</mark>',
+    );
+  }
+
+  // Search History Methods
+  loadSearchHistory() {
+    try {
+      const history = localStorage.getItem("patientSearchHistory");
+      return history ? JSON.parse(history) : [];
+    } catch (error) {
+      console.warn("Failed to load search history:", error);
+      return [];
+    }
+  }
+
+  saveSearchHistory(searchCriteria) {
+    try {
+      // Only save searches with actual criteria
+      const hasValidCriteria = Object.values(searchCriteria).some(
+        (value) => value && value.trim && value.trim() !== "",
+      );
+
+      if (!hasValidCriteria) return;
+
+      // Create search entry
+      const searchEntry = {
+        id: Date.now(),
+        criteria: { ...searchCriteria },
+        timestamp: new Date().toISOString(),
+        description: this.generateSearchDescription(searchCriteria),
+      };
+
+      // Add to history (keep last 10 searches)
+      this.searchHistory.unshift(searchEntry);
+      this.searchHistory = this.searchHistory.slice(0, 10);
+
+      localStorage.setItem(
+        "patientSearchHistory",
+        JSON.stringify(this.searchHistory),
+      );
+      this.updateSearchHistoryUI();
+    } catch (error) {
+      console.warn("Failed to save search history:", error);
+    }
+  }
+
+  generateSearchDescription(criteria) {
+    const parts = [];
+    if (criteria.storeId) parts.push(`Store: ${criteria.storeId}`);
+    if (criteria.province) parts.push(`Province: ${criteria.province}`);
+    if (criteria.firstName) parts.push(`First: ${criteria.firstName}`);
+    if (criteria.lastName) parts.push(`Last: ${criteria.lastName}`);
+    if (criteria.healthNumber) parts.push(`Health#: ${criteria.healthNumber}`);
+
+    return parts.join(", ") || "Empty search";
+  }
+
+  updateSearchHistoryUI() {
+    if (this.searchHistory.length === 0) return;
+
+    let historyContainer = document.querySelector(".search-history-container");
+    if (!historyContainer) {
+      historyContainer = document.createElement("div");
+      historyContainer.className = "search-history-container";
+      historyContainer.innerHTML = `
+        <div style="margin: 1rem 0 0.5rem 0; padding-top: 1rem; border-top: 1px solid var(--border-color);">
+          <h4 style="font-size: 0.875rem; color: var(--text-secondary); margin: 0 0 0.5rem 0; display: flex; align-items: center; gap: 0.5rem;">
+            <i class="fas fa-history"></i>
+            Recent Searches
+          </h4>
+          <div class="search-history-items" style="display: flex; flex-wrap: wrap; gap: 0.5rem;"></div>
+        </div>
+      `;
+
+      document
+        .getElementById("advancedPatientSearchForm")
+        .appendChild(historyContainer);
+    }
+
+    const itemsContainer = historyContainer.querySelector(
+      ".search-history-items",
+    );
+    itemsContainer.innerHTML = "";
+
+    this.searchHistory.slice(0, 5).forEach((entry) => {
+      const chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "search-chip";
+      chip.style.fontSize = "0.75rem";
+      chip.style.opacity = "0.8";
+      chip.textContent = entry.description;
+      chip.title = `Search performed on ${new Date(entry.timestamp).toLocaleString()}`;
+
+      chip.onclick = () => {
+        this.applySearchFromHistory(entry.criteria);
+      };
+
+      itemsContainer.appendChild(chip);
+    });
+  }
+
+  applySearchFromHistory(criteria) {
+    // Fill form with historical search criteria
+    document.getElementById("searchStoreId").value = criteria.storeId || "";
+    document.getElementById("searchProvince").value = criteria.province || "";
+    document.getElementById("searchFirstName").value = criteria.firstName || "";
+    document.getElementById("searchLastName").value = criteria.lastName || "";
+    document.getElementById("searchHealthNumber").value =
+      criteria.healthNumber || "";
+
+    // Trigger search
+    this.handleAdvancedPatientSearch();
   }
 
   // Form data helpers
@@ -567,6 +1090,7 @@ class UIManager {
   hideResults() {
     document.getElementById("pharmacyResults").classList.add("hidden");
     document.getElementById("patientResults").classList.add("hidden");
+    document.getElementById("patientSearchResults").classList.add("hidden");
   }
 
   clearPharmacyForm() {
@@ -957,8 +1481,54 @@ class UIManager {
   }
 }
 
+/*
+ * ADVANCED PATIENT SEARCH IMPLEMENTATION SUMMARY
+ * ==============================================
+ *
+ * This implementation adds a comprehensive patient search functionality to the Central Pharmacy Management System:
+ *
+ * 1. SEARCH CAPABILITIES:
+ *    - Multi-field search: Store ID, Province, First Name, Last Name, Health Number
+ *    - Flexible combinations: Any combination of criteria can be used
+ *    - Real-time validation: Input validation for Store ID format, Health Number format, and Name format
+ *    - Quick search presets: Pre-configured search buttons for common queries
+ *
+ * 2. USER EXPERIENCE FEATURES:
+ *    - Animated search results with hover effects
+ *    - Search result highlighting of matching terms
+ *    - Export functionality to CSV format
+ *    - Search history with localStorage persistence
+ *    - Interactive result selection that populates the main patient view
+ *    - Mobile-responsive design with touch-friendly interactions
+ *
+ * 3. API INTEGRATION:
+ *    - New searchPatients() method in PharmacyAPI class
+ *    - Connects to POST /patients/search endpoint
+ *    - Handles all search criteria combinations defined in StorePatientRecordView
+ *
+ * 4. UI COMPONENTS ADDED:
+ *    - Advanced search form with province dropdown and input validation
+ *    - Search results grid with patient cards
+ *    - Search statistics display (patient count, stores, provinces)
+ *    - Quick search chips for common searches
+ *    - Search history chips for recent searches
+ *    - Export and close buttons for result management
+ *
+ * 5. PERFORMANCE & UX OPTIMIZATIONS:
+ *    - CSS animations and transitions for smooth interactions
+ *    - Form validation with visual feedback
+ *    - Loading states and progress indicators
+ *    - Error handling with user-friendly messages
+ *    - Responsive design for mobile and desktop
+ *
+ * The implementation provides a modern, intuitive search experience that allows pharmacy staff
+ * to quickly find patients across multiple stores using flexible search criteria.
+ */
+
 // Initialize the application
 document.addEventListener("DOMContentLoaded", () => {
-  window.pharmacyUI = new UIManager();
+  window.uiManager = new UIManager();
+  window.pharmacyUI = window.uiManager; // Keep backward compatibility
   console.log("Central Pharmacy Management System initialized");
+  console.log("Advanced Patient Search functionality loaded");
 });
