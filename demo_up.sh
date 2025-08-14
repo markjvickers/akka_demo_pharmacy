@@ -1,5 +1,6 @@
 #!/bin/bash
-echo "Starting demo..."
+# Assumes that you have previously installed the AKKA CLI and gh CLI, and authorized each.
+echo "Starting the pharmacy demo..."
 
 # only do this if we need to deploy central
 # You need to wait until this step is finished before proceeding
@@ -28,6 +29,6 @@ echo "$routes" | awk 'NR > 1 {print $2}' | while read -r hostname; do
   if [ -n "$hostname" ]; then
     url="https://${hostname}"
     echo "🚀 Opening: ${url}"
-    open "$url" # Use "xdg-open" on most Linux distributions
+    open "$url"
   fi
 done
