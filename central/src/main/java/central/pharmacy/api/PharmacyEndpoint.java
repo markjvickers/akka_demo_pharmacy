@@ -15,8 +15,10 @@ import akka.javasdk.http.HttpException;
 import akka.javasdk.http.HttpResponses;
 import central.pharmacy.domain.Pharmacy;
 import central.pharmacy.application.PharmacyEntity;
+import central.pharmacy.application.PharmacySearchView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.util.List;
 
 @Acl(allow = @Acl.Matcher(principal = Acl.Principal.INTERNET))
 //@JWT(validate = JWT.JwtMethodMode.BEARER_TOKEN)
@@ -77,5 +79,116 @@ public class PharmacyEndpoint extends AbstractHttpEndpoint {
                 .invoke(pharmacy);
         return HttpResponses.ok();
     }
+
+    // Search endpoints
+    @Get("/search/city/{city}")
+    public List<Pharmacy> searchByCity(String city) {
+        logger.info("Searching pharmacies by city: {}", city);
+        return componentClient
+                .forView()
+                .method(PharmacySearchView::searchByCity)
+                .invoke(city)
+                .pharmacies();
+    }
+
+    @Get("/search/province/{province}")
+    public List<Pharmacy> searchByProvince(String province) {
+        logger.info("Searching pharmacies by province: {}", province);
+        return componentClient
+                .forView()
+                .method(PharmacySearchView::searchByProvince)
+                .invoke(province)
+                .pharmacies();
+    }
+
+    @Get("/search/postal-code/{postalCode}")
+    public List<Pharmacy> searchByPostalCode(String postalCode) {
+        logger.info("Searching pharmacies by postal code: {}", postalCode);
+        return componentClient
+                .forView()
+                .method(PharmacySearchView::searchByPostalCode)
+                .invoke(postalCode)
+                .pharmacies();
+    }
+
+    @Get("/search/phone/{phoneNumber}")
+    public List<Pharmacy> searchByPhoneNumber(String phoneNumber) {
+        logger.info("Searching pharmacies by phone number: {}", phoneNumber);
+        return componentClient
+                .forView()
+                .method(PharmacySearchView::searchByPhoneNumber)
+                .invoke(phoneNumber)
+                .pharmacies();
+    }
+
+    @Get("/search/address/{streetAddress}")
+    public List<Pharmacy> searchByAddress(String streetAddress) {
+        logger.info("Searching pharmacies by address: {}", streetAddress);
+        return componentClient
+                .forView()
+                .method(PharmacySearchView::searchByAddress)
+                .invoke(streetAddress)
+                .pharmacies();
+    }
+
+    @Get("/search/term/{searchTerm}")
+    public List<Pharmacy> searchByTerm(String searchTerm) {
+        logger.info("Searching pharmacies by term: {}", searchTerm);
+        return componentClient
+                .forView()
+                .method(PharmacySearchView::searchByTerm)
+                .invoke(searchTerm)
+                .pharmacies();
+    }
+
+    @Post("/search/city-province")
+    public List<Pharmacy> searchByCityAndProvince(CityAndProvinceRequest request) {
+        logger.info("Searching pharmacies by city: {} and province: {}", 
+                   request.city(), request.province());
+        return componentClient
+                .forView()
+                .method(PharmacySearchView::searchByCityAndProvince)
+                .invoke(new PharmacySearchView.CityAndProvinceCriteria(request.city(), request.province()))
+                .pharmacies();
+    }
+
+    @Post("/search/province-postal")
+    public List<Pharmacy> searchByProvinceAndPostalCode(ProvinceAndPostalRequest request) {
+        logger.info("Searching pharmacies by province: {} and postal code: {}", 
+                   request.province(), request.postalCode());
+        return componentClient
+                .forView()
+                .method(PharmacySearchView::searchByProvinceAndPostalCode)
+                .invoke(new PharmacySearchView.ProvinceAndPostalCodeCriteria(request.province(), request.postalCode()))
+                .pharmacies();
+    }
+
+    @Post("/search/city-postal")
+    public List<Pharmacy> searchByCityAndPostalCode(CityAndPostalRequest request) {
+        logger.info("Searching pharmacies by city: {} and postal code: {}", 
+                   request.city(), request.postalCode());
+        return componentClient
+                .forView()
+                .method(PharmacySearchView::searchByCityAndPostalCode)
+                .invoke(new PharmacySearchView.CityAndPostalCodeCriteria(request.city(), request.postalCode()))
+                .pharmacies();
+    }
+
+    @Post("/search/location")
+    public List<Pharmacy> searchByAllLocation(AllLocationRequest request) {
+        logger.info("Searching pharmacies by city: {}, province: {} and postal code: {}", 
+                   request.city(), request.province(), request.postalCode());
+        return componentClient
+                .forView()
+                .method(PharmacySearchView::searchByAllLocation)
+                .invoke(new PharmacySearchView.AllLocationCriteria(request.city(), request.province(), request.postalCode()))
+                .pharmacies();
+    }
+
+    // Request record classes for POST endpoints
+    public record CityAndProvinceRequest(String city, String province) {}
+    public record ProvinceAndPostalRequest(String province, String postalCode) {}
+    public record CityAndPostalRequest(String city, String postalCode) {}
+    public record AllLocationRequest(String city, String province, String postalCode) {}
 
 }
