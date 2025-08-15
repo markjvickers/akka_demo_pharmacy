@@ -73,31 +73,49 @@ class PharmacyAPI {
 
   // Pharmacy search endpoints (path-based)
   async searchPharmaciesByCity(city) {
-    return await this.request(`/pharmacies/search/city/${encodeURIComponent(city)}`);
+    return await this.request(
+      `/pharmacies/search/city/${encodeURIComponent(city)}`,
+    );
   }
   async searchPharmaciesByProvince(province) {
-    return await this.request(`/pharmacies/search/province/${encodeURIComponent(province)}`);
+    return await this.request(
+      `/pharmacies/search/province/${encodeURIComponent(province)}`,
+    );
   }
   async searchPharmaciesByPostalCode(postalCode) {
-    return await this.request(`/pharmacies/search/postal-code/${encodeURIComponent(postalCode)}`);
+    return await this.request(
+      `/pharmacies/search/postal-code/${encodeURIComponent(postalCode)}`,
+    );
   }
   async searchPharmaciesByPhone(phone) {
-    return await this.request(`/pharmacies/search/phone/${encodeURIComponent(phone)}`);
+    return await this.request(
+      `/pharmacies/search/phone/${encodeURIComponent(phone)}`,
+    );
   }
   async searchPharmaciesByAddress(street) {
-    return await this.request(`/pharmacies/search/address/${encodeURIComponent(street)}`);
+    return await this.request(
+      `/pharmacies/search/address/${encodeURIComponent(street)}`,
+    );
   }
   async searchPharmaciesByTerm(term) {
-    return await this.request(`/pharmacies/search/term/${encodeURIComponent(term)}`);
+    return await this.request(
+      `/pharmacies/search/term/${encodeURIComponent(term)}`,
+    );
   }
   async searchPharmaciesCityProvince(city, province) {
-    return await this.request(`/pharmacies/search/location/city-province/${encodeURIComponent(city)}/${encodeURIComponent(province)}`);
+    return await this.request(
+      `/pharmacies/search/location/city-province/${encodeURIComponent(city)}/${encodeURIComponent(province)}`,
+    );
   }
   async searchPharmaciesProvincePostal(province, postal) {
-    return await this.request(`/pharmacies/search/location/province-postal/${encodeURIComponent(province)}/${encodeURIComponent(postal)}`);
+    return await this.request(
+      `/pharmacies/search/location/province-postal/${encodeURIComponent(province)}/${encodeURIComponent(postal)}`,
+    );
   }
   async searchPharmaciesCityPostal(city, postal) {
-    return await this.request(`/pharmacies/search/location/city-postal/${encodeURIComponent(city)}/${encodeURIComponent(postal)}`);
+    return await this.request(
+      `/pharmacies/search/location/city-postal/${encodeURIComponent(city)}/${encodeURIComponent(postal)}`,
+    );
   }
 }
 
@@ -213,8 +231,12 @@ class UIManager {
     // Hide list results (pharmacy)
     const hideTop = document.getElementById("hidePharmacySearchResultsBtnTop");
     const hideBottom = document.getElementById("hidePharmacySearchResultsBtn");
-    if (hideTop) hideTop.addEventListener("click", () => this.hidePharmacySearchResults());
-    if (hideBottom) hideBottom.addEventListener("click", () => this.hidePharmacySearchResults());
+    if (hideTop)
+      hideTop.addEventListener("click", () => this.hidePharmacySearchResults());
+    if (hideBottom)
+      hideBottom.addEventListener("click", () =>
+        this.hidePharmacySearchResults(),
+      );
   }
 
   bindSearchValidation() {
@@ -764,23 +786,35 @@ class UIManager {
     this.handleAdvancedPatientSearch();
   }
 
-  // New: Advanced Pharmacy Search logic
-  async handleAdvancedPharmacySearch() {
-    const city = document.getElementById("advPhCity").value.trim();
-    const province = document.getElementById("advPhProvince").value.trim();
-    const postal = document.getElementById("advPhPostal").value.trim();
-    const phone = document.getElementById("advPhPhone").value.trim();
-    const street = document.getElementById("advPhStreet").value.trim();
-    const term = document.getElementById("advPhTerm").value.trim();
+  // Find Pharmacy Search logic (handles both ID lookup and search)
+  async handleFindPharmacySearch() {
+    const pharmacyId = document.getElementById("getPharmacyId").value.trim();
+    const city = document.getElementById("getPhCity").value.trim();
+    const province = document.getElementById("getPhProvince").value.trim();
+    const postal = document.getElementById("getPhPostal").value.trim();
+    const phone = document.getElementById("getPhPhone").value.trim();
+    const street = document.getElementById("getPhStreet").value.trim();
 
+    // If pharmacy ID is provided, use the existing single pharmacy lookup
+    if (pharmacyId) {
+      return this.handleGetPharmacy();
+    }
+
+    // Otherwise, perform search based on available criteria
     try {
-      this.showProgress();
+      this.showLoading("Searching pharmacies...");
 
       let pharmacies = [];
       if (city && province) {
-        pharmacies = await this.api.searchPharmaciesCityProvince(city, province);
+        pharmacies = await this.api.searchPharmaciesCityProvince(
+          city,
+          province,
+        );
       } else if (province && postal) {
-        pharmacies = await this.api.searchPharmaciesProvincePostal(province, postal);
+        pharmacies = await this.api.searchPharmaciesProvincePostal(
+          province,
+          postal,
+        );
       } else if (city && postal) {
         pharmacies = await this.api.searchPharmaciesCityPostal(city, postal);
       } else if (city) {
@@ -793,22 +827,35 @@ class UIManager {
         pharmacies = await this.api.searchPharmaciesByPhone(phone);
       } else if (street) {
         pharmacies = await this.api.searchPharmaciesByAddress(street);
-      } else if (term) {
-        pharmacies = await this.api.searchPharmaciesByTerm(term);
+      } else {
+        this.showAlert("Please enter at least one search criterion", "error");
+        return;
       }
 
+      console.log("Search completed, pharmacies found:", pharmacies);
       this.renderPharmacySearchResults(pharmacies || []);
     } catch (err) {
+      console.error("Search error:", err);
       this.showAlert(`Search failed: ${err.message}`, "error");
     } finally {
-      this.hideProgress();
+      this.hideLoading();
     }
   }
 
   renderPharmacySearchResults(pharmacies) {
-    const resultsWrap = document.getElementById("pharmacyAdvancedSearchResults");
+    console.log("renderPharmacySearchResults called with:", pharmacies);
+
+    const resultsWrap = document.getElementById(
+      "pharmacyAdvancedSearchResults",
+    );
     const countEl = document.getElementById("pharmacySearchResultsCount");
     const container = document.getElementById("pharmacySearchData");
+
+    console.log("Elements found:", {
+      resultsWrap: !!resultsWrap,
+      countEl: !!countEl,
+      container: !!container,
+    });
 
     if (!pharmacies || pharmacies.length === 0) {
       resultsWrap.classList.remove("hidden");
@@ -872,8 +919,32 @@ class UIManager {
     });
   }
 
+  clearFindPharmacyForm() {
+    [
+      "getPharmacyId",
+      "getPhCity",
+      "getPhProvince",
+      "getPhPostal",
+      "getPhPhone",
+      "getPhStreet",
+    ].forEach((id) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (el.tagName.toLowerCase() === "select") el.selectedIndex = 0;
+      else el.value = "";
+    });
+  }
+
   hidePharmacySearchResults() {
-    document.getElementById("pharmacyAdvancedSearchResults").classList.add("hidden");
+    document
+      .getElementById("pharmacyAdvancedSearchResults")
+      .classList.add("hidden");
+  }
+
+  escapeHtml(text) {
+    const div = document.createElement("div");
+    div.textContent = text;
+    return div.innerHTML;
   }
 
   // Form data helpers
